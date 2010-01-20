@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="lib/shivascafe/src"/>
+	<classpathentry kind="src" path="lib/jmfvideoimage/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jre6/lib/ext/QTJava.zip">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Program Files/QuickTime/QTSystem"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/scenemonitor/jmejtree_jme2.jar"/>
+	<classpathentry kind="lib" path="lib/scenemonitor/propertytable.jar"/>
+	<classpathentry kind="lib" path="lib/scenemonitor/scenemonitor_jme2.jar"/>
+	<classpathentry kind="lib" path="lib/scenemonitor/sm_properties_jme2.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-audio.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-awt.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-collada.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-editors.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-effects.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-font.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-gamestates.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-model.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-ogrexml.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-scene.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-swt.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme-terrain.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jme.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/ARMonkeyKit/lib/jme2.0_fobs/jme2-javadoc.zip!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/swt/windows/swt.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/lwjgl/jinput.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/lwjgl/lwjgl_util_applet.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/lwjgl/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/lwjgl/lwjgl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ARMonkeyKit/lib/jme2.0_fobs/lwjgl/natives"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jorbis/jorbis-0.0.17.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jogl/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="lib/jme2.0_fobs/jogl/jogl.jar"/>
+	<classpathentry kind="lib" path="lib/video-fobs/fobs-jmepatch.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ARMonkeyKit/lib/video-fobs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/video-fobs/jmf.jar"/>
+	<classpathentry kind="lib" path="lib/nyartoolkit-2.5.0-nosamples/nyartoolkit-2.5.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
