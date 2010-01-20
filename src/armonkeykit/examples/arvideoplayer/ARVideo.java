@@ -116,8 +116,10 @@ public class ARVideo extends SimpleGame implements QtCaptureListener
 
 		if (backgroundTexture != null) {
 			TextureManager.releaseTexture(backgroundTexture);
+			TextureManager.deleteTextureFromCard(backgroundTexture);
 		}
 		synchronized (bufferedVideoImage) {
+
 			backgroundTexture = TextureManager.loadTexture(bufferedVideoImage,
 					Texture.MinificationFilter.BilinearNearestMipMap,
 					Texture.MagnificationFilter.Bilinear, true);
@@ -149,7 +151,7 @@ public class ARVideo extends SimpleGame implements QtCaptureListener
 		ByteBufferRenderer.useFOBSPatch = true;
 		
 		videoQuad = new VideoQuad("VideoQuad");
-		videoQuad.updateGeometry(80f, 40f);
+		videoQuad.updateGeometry(160f, 80f);
 		videoQuad.setVideoURL(ARVideo.class.getResource("net_content.mp4"));
 		// for some reason, need to flip the video
 		Quaternion qvq = new Quaternion();
