@@ -66,8 +66,8 @@ public class ARVideo extends SimpleGame implements QtCaptureListener
 	private static final int CAMERA_WIDTH = 640;
 	private static final int CAMERA_HEIGHT = 480;
 	
-	private final String CARCODE_FILE = "Data/patt.hiro";
-	private final String PARAM_FILE = "Data/camera_para.dat";
+	private final String CARCODE_FILE = "ardata/patt.hiro";
+	private final String PARAM_FILE = "ardata/camera_para.dat";
 	private QtCameraCapture qtCameraCapture;
 	private NyARSingleDetectMarker arDetector;
 	private QtNyARRaster_RGB raster;
