@@ -35,8 +35,8 @@ package armonkeykit.examples;
 import jp.nyatla.nyartoolkit.NyARException;
 import jp.nyatla.nyartoolkit.qt.sample.JmeNyARParam;
 
-
-import armonkeykit.core.QtTextureBlatter;
+import armonkeykit.core.CaptureQuad;
+import armonkeykit.core.SyncObject;
 
 import com.acarter.scenemonitor.SceneMonitor;
 import com.jme.app.SimpleGame;
@@ -47,9 +47,7 @@ import com.jme.math.Matrix3f;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.scene.Node;
-import com.jme.scene.shape.Quad;
 import com.jme.scene.shape.Torus;
-import com.jme.scene.state.TextureState;
 
 import jp.nyatla.nyartoolkit.core.*;
 import jp.nyatla.nyartoolkit.core.param.NyARPerspectiveProjectionMatrix;
@@ -68,12 +66,11 @@ public abstract class ExampleBase extends SimpleGame
 	private NyARSingleDetectMarker arDetector;
 	private JmeNyARParam jmeARParameters;
 	private Node arAffectedNode;
-	private TextureState backgroundTextureState;
 
 	private final NyARTransMatResult displayTransMatResult = new NyARTransMatResult();
 
-	private QtTextureBlatter textureBlatter;
 	private NyARCode ar_code;
+	private CaptureQuad cameraBG;
 
 	public ExampleBase() throws NyARException, NyARException
 	{
@@ -87,7 +84,7 @@ public abstract class ExampleBase extends SimpleGame
 	@Override
 	protected void simpleInitGame() {
 		display.setTitle("Example");
-		display.setVSyncEnabled(true);
+		//display.setVSyncEnabled(true); // use this to limit frame rate with vertical sync
 
 		cam.setLocation(new Vector3f(0, 0, 0));
 		cam.update();
@@ -113,27 +110,20 @@ public abstract class ExampleBase extends SimpleGame
 		rootNode.attachChild(arAffectedNode);
 
 		input = new NodeHandler(new Torus(), 10, 2);
-
-
-
+		
 		NyARPerspectiveProjectionMatrix m2 = jmeARParameters.getPerspectiveProjectionMatrix();
 
-		Quad cameraBG = new Quad("Background");
+		cameraBG = new CaptureQuad("Background", CAMERA_WIDTH, CAMERA_HEIGHT, 60f);
 		cameraBG.updateGeometry(CAMERA_WIDTH *4 , CAMERA_HEIGHT *4);
 		cameraBG.setCastsShadows(false);
 		Matrix3f m = new Matrix3f();
-		m.fromAngleAxis((float) Math.toRadians(180), new Vector3f(0, 1, 0));
+		m.fromAngleAxis((float) Math.toRadians(180), new Vector3f(0, 0, 1));
 		cameraBG.setLocalRotation(m);
-		
-		backgroundTextureState = display.getRenderer().createTextureState();
-		backgroundTextureState.setEnabled(true);
-		cameraBG.setRenderState(backgroundTextureState);
 		cameraBG.setLocalTranslation(new Vector3f(0, 0, (float) -m2.m00 * 4));
+
 		try {
-			textureBlatter = new QtTextureBlatter(CAMERA_WIDTH, CAMERA_HEIGHT, 30f, backgroundTextureState);
-			arDetector = new NyARSingleDetectMarker(jmeARParameters, ar_code, 80.0,textureBlatter.getRaster().getBufferType());
+			arDetector = new NyARSingleDetectMarker(jmeARParameters, ar_code, 80.0,cameraBG.getRaster().getBufferType());
 			ar_code.loadARPattFromFile(CARCODE_FILE);
-			textureBlatter.start();
 		} catch (NyARException e) {
 			e.printStackTrace();
 		}
@@ -155,32 +145,35 @@ public abstract class ExampleBase extends SimpleGame
 	 */
 	@Override
 	protected void simpleUpdate() {
-		if (textureBlatter.hasData()) {
-			try {
-				boolean detect = arDetector.detectMarkerLite(textureBlatter.getRaster());
+		synchronized(SyncObject.getSyncObject()) {
+			cameraBG.update();
+			if (cameraBG.getRaster() != null) {
 
-				if (detect && arDetector.getConfidence() > 0.5) {
-					NyARTransMatResult src = displayTransMatResult;
-					arDetector.getTransmationMatrix(src);
+				try {
+					boolean detect = arDetector.detectMarkerLite(cameraBG.getRaster());
 
-					arAffectedNode.setLocalRotation(new Matrix3f((float) -src.m00,
-							(float) -src.m01, (float) src.m02,
-							(float) -src.m10, (float) -src.m11,
-							(float) src.m12, (float) -src.m20,
-							(float) -src.m21, (float) src.m22));
-					arAffectedNode.setLocalTranslation((float) -src.m03,
-							(float) -src.m13, (float) -src.m23);
-					arAffectedNode.setLocalScale(1.0f);
+					if (detect && arDetector.getConfidence() > 0.5) {
+						NyARTransMatResult src = displayTransMatResult;
+						arDetector.getTransmationMatrix(src);
 
-				} else {
-					arAffectedNode.setLocalTranslation(0f, 0f, -100000f);
+						arAffectedNode.setLocalRotation(new Matrix3f((float) -src.m00,
+								(float) -src.m01, (float) src.m02,
+								(float) -src.m10, (float) -src.m11,
+								(float) src.m12, (float) -src.m20,
+								(float) -src.m21, (float) src.m22));
+						arAffectedNode.setLocalTranslation((float) -src.m03,
+								(float) -src.m13, (float) -src.m23);
+						arAffectedNode.setLocalScale(1.0f);
+
+					} else {
+						arAffectedNode.setLocalTranslation(0f, 0f, -100000f);
+					}
+
+				} catch (NyARException e) {
+					e.printStackTrace();
 				}
-
-			} catch (NyARException e) {
-				e.printStackTrace();
 			}
 		}
-
 		callUpdates();
 	}
 

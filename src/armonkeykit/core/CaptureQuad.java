@@ -1,9 +1,7 @@
-package armonkeykit.test;
-
+package armonkeykit.core;
 
 import jp.nyatla.nyartoolkit.NyARException;
-
-import armonkeykit.core.QtCaptureImage;
+import jp.nyatla.nyartoolkit.qt.utils.QtNyARRaster_RGB;
 
 import com.jme.image.Texture2D;
 import com.jme.image.Texture.ApplyMode;
@@ -43,13 +41,13 @@ public class CaptureQuad extends Quad {
 	
 	public void update() {
 		if(image != null) {
-			if (!image.update(tex)) {
-				image.waitSome(3);
-			}
+			image.update(tex);
 		}
 	}
 	
-
+	public QtNyARRaster_RGB getRaster() {
+		return image.getRaster();
+	}
 
 	public void start() {
 		if(image != null) {

@@ -55,9 +55,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.OpenGLException;
 import org.lwjgl.opengl.Util;
 
+
 import com.jme.image.Image;
 import com.jme.image.Texture;
 import com.jme.math.FastMath;
+import com.jme.math.Vector3f;
 import com.jme.util.geom.BufferUtils;
 
 public class QtCaptureImage extends Image implements QtCaptureListener {
@@ -81,17 +83,14 @@ public class QtCaptureImage extends Image implements QtCaptureListener {
 	long lastupdated = 0;
 	private ByteBuffer buffer;
 
-
-
 	private int pixelformat, dataformat;
 	private QtCameraCapture qtCameraCapture;
 	private QtNyARRaster_RGB raster;
-
+	private boolean initAndScaleTexture = false;
 
 	public void setSize(int cameraWidth, int cameraHeight, RGBFormat format) {
 		initializeCamera(cameraWidth, cameraHeight, 30f);
 	}
-
 
 	public void initializeCamera(int cameraWidth, int cameraHeight, float frameRate) {		
 		if(qtCameraCapture == null) {
@@ -107,7 +106,7 @@ public class QtCaptureImage extends Image implements QtCaptureListener {
 		pixelformat = GL.GL_RGB;
 		this.setFormat(Format.RGB8);
 		dataformat = GL11.GL_UNSIGNED_BYTE;
-		
+
 		this.videowidth = cameraWidth;
 		this.videoheight = cameraHeight;
 
@@ -126,6 +125,7 @@ public class QtCaptureImage extends Image implements QtCaptureListener {
 
 			data.clear();
 			data.add( ByteBuffer.allocateDirect(size*size*4).order(ByteOrder.nativeOrder()) );
+			initAndScaleTexture  = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -134,48 +134,56 @@ public class QtCaptureImage extends Image implements QtCaptureListener {
 			this.notifyAll();
 		}
 	}
-	
-	public synchronized boolean update(Texture texture) {
-		if(buffer == null) {
-			return false;
+
+	public boolean update(Texture texture) {
+
+		synchronized(SyncObject.getSyncObject()) {
+
+			if(buffer == null) {
+				return false;
+			}
+			buffer.rewind();
+
+			if(initAndScaleTexture) {
+				scaleTexture(texture);
+			}
+
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureId());
+			GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, videowidth, videoheight, pixelformat, dataformat, buffer);
+
+
+
+			try {
+				Util.checkGLError();
+			} catch (OpenGLException e) {
+				log.info("Error rendering video to texture. No glTexSubImage2D/OpenGL 1.2 support?");
+			}
+
+			lastupdated = framecounter;
+
+			return true;
 		}
-		buffer.rewind();
-
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureId());
-		GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, videowidth, videoheight, pixelformat, dataformat, buffer);
-
-
-		
-		try {
-			Util.checkGLError();
-		} catch (OpenGLException e) {
-			log.info("Error rendering video to texture. No glTexSubImage2D/OpenGL 1.2 support?");
-		}
-
-		lastupdated = framecounter;
-		this.notifyAll();
-
-		return true;
 	}
 
-	public synchronized void waitSome(int time) {
-		try {
-			this.wait(time);
-		} catch (InterruptedException e) {
-		}
+
+
+	private void scaleTexture(Texture texture) {
+		texture.setScale(new Vector3f(videowidth* (1f / this.width),videoheight * (1f / this.height),1f));
 	}
 
-	public synchronized void onUpdateBuffer(byte[] pixels)
+	public void onUpdateBuffer(byte[] pixels)
 	{
-		if(buffer == null) {
-			buffer = BufferUtils.createByteBuffer(getWidth()*getHeight()*3);
-		}
-		try {
-			buffer.clear();
-			buffer.put(pixels);
-			getRaster().wrapBuffer(pixels);
-		} catch (NyARException e) {
-			e.printStackTrace();
+		synchronized(SyncObject.getSyncObject()) {
+			if(buffer == null) {
+				buffer = BufferUtils.createByteBuffer(getWidth()*getHeight()*3);
+			}
+			try {
+				buffer.clear();
+				buffer.put(pixels);
+				getRaster().wrapBuffer(pixels);
+			} catch (NyARException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
