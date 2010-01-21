@@ -1,4 +1,4 @@
-package armonkeykit.examples.arvideoplayer;
+package armonkeykit.core.video;
 
 import java.net.URL;
 
