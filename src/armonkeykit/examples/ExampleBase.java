@@ -48,6 +48,7 @@ import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.scene.Node;
 import com.jme.scene.shape.Torus;
+import com.jme.system.DisplaySystem;
 
 import jp.nyatla.nyartoolkit.core.*;
 import jp.nyatla.nyartoolkit.core.param.NyARPerspectiveProjectionMatrix;
@@ -132,8 +133,10 @@ public abstract class ExampleBase extends SimpleGame
 		float[] ad = jmeARParameters.getCameraFrustum();
 		cam.setFrustum(ad[0], ad[1], ad[2], ad[3], ad[4], ad[5]);
 
-		SceneMonitor.getMonitor().showViewer(true);
-		SceneMonitor.getMonitor().registerNode(rootNode);
+		if(!DisplaySystem.getDisplaySystem().isFullScreen()) {
+			SceneMonitor.getMonitor().showViewer(true);
+			SceneMonitor.getMonitor().registerNode(rootNode);
+		}
 	}
 
 	public abstract void addARContent(Node arAffectedNode2, Node rootNode);

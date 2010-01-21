@@ -34,7 +34,7 @@ public class ARVideo extends ExampleBase {
 		ByteBufferRenderer.useFOBSOptimization = true;
 		ByteBufferRenderer.useFOBSPatch = true;
 		videoQuad = new VideoQuad("VideoQuad");
-		videoQuad.updateGeometry(160f, 80f);
+		videoQuad.updateGeometry(180f, 90f);
 		videoQuad.setVideoURL(ARVideo.class.getResource("net_content.mp4"));
 		// for some reason, need to flip the video
 		Quaternion qvq = new Quaternion();
