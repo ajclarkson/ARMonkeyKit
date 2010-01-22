@@ -45,12 +45,14 @@ import javax.media.ControllerEvent;
 import javax.media.ControllerListener;
 import javax.media.EndOfMediaEvent;
 import javax.media.Manager;
+import javax.media.MediaLocator;
 import javax.media.NoPlayerException;
 import javax.media.Player;
 import javax.media.ResourceUnavailableEvent;
 import javax.media.Time;
 import javax.media.control.FramePositioningControl;
 import javax.media.format.RGBFormat;
+import javax.media.protocol.DataSource;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -84,23 +86,54 @@ public class JMFVideoImage extends Image implements ByteBufferRendererListener, 
 	
 	
 	private int scalemethod;
+//	public JMFVideoImage(URL url, boolean loop, int scalemethod) throws NoPlayerException, CannotRealizeException, IOException {
+//	
+//		this.scalemethod = scalemethod;
+//		
+//
+//		Manager.setHint(Manager.PLUGIN_PLAYER, new Boolean(true));
+//		ByteBufferRenderer.listener = this;
+//
+//		jmfplayer = Manager.createRealizedPlayer(url);
+//		log.info("Created player for: " + url.toString());
+//
+//		jmfplayer.addControllerListener(this);
+//		
+//	    fpc = (FramePositioningControl)jmfplayer.getControl("javax.media.control.FramePositioningControl");    
+//
+//	}
+
+	/** New version of JMFVideoImage to use MediaLocator - fixes WinXP bug **/
 	public JMFVideoImage(URL url, boolean loop, int scalemethod) throws NoPlayerException, CannotRealizeException, IOException {
-	
+		
 		this.scalemethod = scalemethod;
 		
 
 		Manager.setHint(Manager.PLUGIN_PLAYER, new Boolean(true));
 		ByteBufferRenderer.listener = this;
 
-		jmfplayer = Manager.createRealizedPlayer(url);
-		log.info("Created player for: " + url.toString());
-
-		jmfplayer.addControllerListener(this);
-		
-	    fpc = (FramePositioningControl)jmfplayer.getControl("javax.media.control.FramePositioningControl");    
-
+		try {
+	
+			String address = url.toString();
+			
+			
+			address = address.replaceAll("file:/", "file:");
+			address = address.replaceAll("%20", " ");
+			
+		    MediaLocator locator = new MediaLocator(address);
+		    
+		    DataSource ds = Manager.createDataSource(locator);
+	
+			jmfplayer = Manager.createRealizedPlayer(ds);
+			log.info("Created player for: " + url.toString());
+	
+			jmfplayer.addControllerListener(this);
+			
+		    fpc = (FramePositioningControl)jmfplayer.getControl("javax.media.control.FramePositioningControl");    
+		} catch (Exception e) {
+				e.printStackTrace();
+		}
 	}
-
 	public void startMovie() {
 		active = true;
 		jmfplayer.start();

@@ -123,12 +123,11 @@ public abstract class MultipleMarkerExampleBase extends SimpleGame {
 			
 			 // Need to check to make sure that this is the most efficient way of tracking two hard coded markers
 				try {
-					foundMarkers = arDetector.detectMarkerLite(cameraBG.getRaster(), 110);
+					foundMarkers = arDetector.detectMarkerLite(cameraBG.getRaster(), 200);
 					
 					if (foundMarkers > 0){
 						
 						for (int i =0; i< foundMarkers; i++){
-							System.out.println("INFO: Marker Detected ar_codes ID: " + arDetector.getARCodeIndex(i) + " CONFIDENCE: " + arDetector.getConfidence(i));
 							
 							
 							if (arDetector.getConfidence(i) > 0.5){
