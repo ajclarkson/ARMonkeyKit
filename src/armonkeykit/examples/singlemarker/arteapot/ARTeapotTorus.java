@@ -1,6 +1,6 @@
-package armonkeykit.examples.arteapot;
+package armonkeykit.examples.singlemarker.arteapot;
 
-import armonkeykit.examples.ExampleBase;
+import armonkeykit.examples.singlemarker.SingleMarkerExampleBase;
 
 import com.jme.math.FastMath;
 import com.jme.math.Quaternion;
@@ -11,7 +11,7 @@ import com.jme.scene.shape.Torus;
 
 import jp.nyatla.nyartoolkit.NyARException;
 
-public class ARTeapotTorus extends ExampleBase {
+public class ARTeapotTorus extends SingleMarkerExampleBase {
 
 	public ARTeapotTorus() throws NyARException, NyARException {
 		super();

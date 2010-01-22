@@ -30,7 +30,7 @@
  * 
  */
 
-package armonkeykit.examples;
+package armonkeykit.examples.singlemarker;
 
 import jp.nyatla.nyartoolkit.NyARException;
 import jp.nyatla.nyartoolkit.qt.sample.JmeNyARParam;
@@ -55,13 +55,13 @@ import jp.nyatla.nyartoolkit.core.param.NyARPerspectiveProjectionMatrix;
 import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 import jp.nyatla.nyartoolkit.detector.NyARSingleDetectMarker;
 
-public abstract class ExampleBase extends SimpleGame
+public abstract class SingleMarkerExampleBase extends SimpleGame
 {
 	private static final long serialVersionUID = 6154831884117789648L;
 	private static final int CAMERA_WIDTH = 640;
 	private static final int CAMERA_HEIGHT = 480;
 
-	private final String CARCODE_FILE = "ardata/patt.hiro";
+	private final String CARCODE_FILE = "ardata/patt.kanji";
 	private final String PARAM_FILE = "ardata/camera_para.dat";
 
 	private NyARSingleDetectMarker arDetector;
@@ -73,7 +73,7 @@ public abstract class ExampleBase extends SimpleGame
 	private NyARCode ar_code;
 	private CaptureQuad cameraBG;
 
-	public ExampleBase() throws NyARException, NyARException
+	public SingleMarkerExampleBase() throws NyARException, NyARException
 	{
 		jmeARParameters = new JmeNyARParam();
 		ar_code = new NyARCode(16, 16);

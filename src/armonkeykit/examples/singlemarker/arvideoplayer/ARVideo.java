@@ -1,18 +1,19 @@
-package armonkeykit.examples.arvideoplayer;
+package armonkeykit.examples.singlemarker.arvideoplayer;
 
 import org.llama.jmf.ByteBufferRenderer;
 
 import armonkeykit.core.video.VideoQuad;
-import armonkeykit.examples.ExampleBase;
+import armonkeykit.examples.singlemarker.SingleMarkerExampleBase;
 
 import com.jme.math.FastMath;
 import com.jme.math.Quaternion;
 import com.jme.math.Vector3f;
 import com.jme.scene.Node;
 
+
 import jp.nyatla.nyartoolkit.NyARException;
 
-public class ARVideo extends ExampleBase {
+public class ARVideo extends SingleMarkerExampleBase {
 
 	private VideoQuad videoQuad;
 
