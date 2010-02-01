@@ -62,6 +62,7 @@ import com.jme.math.FastMath;
 import com.jme.math.Vector3f;
 import com.jme.util.geom.BufferUtils;
 
+@SuppressWarnings("restriction")
 public class QtCaptureImage extends Image implements QtCaptureListener {
 
 	private static final Logger log = Logger.getLogger(QtCaptureImage.class.getName());	

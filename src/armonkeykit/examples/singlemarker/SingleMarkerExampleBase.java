@@ -75,8 +75,8 @@ public abstract class SingleMarkerExampleBase extends SimpleGame
 
 	public SingleMarkerExampleBase() throws NyARException, NyARException
 	{
-		jmeARParameters = new JmeNyARParam();
 		ar_code = new NyARCode(16, 16);
+		jmeARParameters = new JmeNyARParam();
 		jmeARParameters.loadARParamFromFile(PARAM_FILE);
 		jmeARParameters.changeScreenSize(CAMERA_WIDTH, CAMERA_HEIGHT);
 	}
@@ -128,8 +128,9 @@ public abstract class SingleMarkerExampleBase extends SimpleGame
 		} catch (NyARException e) {
 			e.printStackTrace();
 		}
-
+ 
 		rootNode.attachChild(cameraBG);
+		
 		float[] ad = jmeARParameters.getCameraFrustum();
 		cam.setFrustum(ad[0], ad[1], ad[2], ad[3], ad[4], ad[5]);
 
@@ -157,6 +158,7 @@ public abstract class SingleMarkerExampleBase extends SimpleGame
 
 					if (detect && arDetector.getConfidence() > 0.5) {
 						NyARTransMatResult src = displayTransMatResult;
+						
 						arDetector.getTransmationMatrix(src);
 
 						arAffectedNode.setLocalRotation(new Matrix3f((float) -src.m00,
@@ -170,8 +172,9 @@ public abstract class SingleMarkerExampleBase extends SimpleGame
 
 					} else {
 						arAffectedNode.setLocalTranslation(0f, 0f, -100000f);
+					
+						
 					}
-
 				} catch (NyARException e) {
 					e.printStackTrace();
 				}
