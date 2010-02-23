@@ -1,7 +1,6 @@
 package armonkeykit.core.markerprocessor;
 
 import jp.nyatla.nyartoolkit.core.raster.rgb.INyARRgbRaster;
-import jp.nyatla.nyartoolkit.core.raster.rgb.NyARRgbRaster;
 import armonkeykit.core.events.AREventListener;
 import armonkeykit.core.markers.Marker;
 
