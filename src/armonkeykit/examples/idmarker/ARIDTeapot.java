@@ -6,11 +6,11 @@ import com.jme.math.Vector3f;
 import com.jme.scene.Node;
 import com.jme.scene.shape.Teapot;
 
-import armonkeykit.core.app.ARMonkeyIDApp;
+import armonkeykit.core.app.ARMonkeyKitApp;
 import armonkeykit.core.app.utils.NodeRotateTranslateListener;
 import armonkeykit.core.markers.NyIDMarker;
 
-public class ARIDTeapot extends ARMonkeyIDApp {
+public class ARIDTeapot extends ARMonkeyKitApp {
 
 	@Override
 	protected void addMarkers() {
@@ -44,6 +44,12 @@ public class ARIDTeapot extends ARMonkeyIDApp {
 		ARIDTeapot app = new ARIDTeapot();
 		app.setConfigShowMode(ConfigShowMode.AlwaysShow);
 		app.start();
+	}
+
+	@Override
+	protected void simpleInitARSystem() {
+		markerProcessor = initIDMarkerProcessor();
+		
 	}
 
 }

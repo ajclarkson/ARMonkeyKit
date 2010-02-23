@@ -8,19 +8,29 @@ import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markerprocessor.IMarkerProcessor;
 import armonkeykit.core.markers.Marker;
 import armonkeykit.core.markers.PatternMarker;
+import armonkeykit.videocapture.CaptureQuad;
 
 import jp.nyatla.nyartoolkit.NyARException;
 import jp.nyatla.nyartoolkit.core.NyARCode;
 import jp.nyatla.nyartoolkit.core.raster.rgb.INyARRgbRaster;
 import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 import jp.nyatla.nyartoolkit.detector.NyARDetectMarker;
+import jp.nyatla.nyartoolkit.qt.sample.JmeNyARParam;
 
 public class PatternMarkerProcessor implements IMarkerProcessor {
 
 	//A list which stores all of the PatternMarker objects currently in use
 	private ArrayList<PatternMarker> markerList = new ArrayList<PatternMarker>();
 	private List<AREventListener> listeners = new ArrayList<AREventListener>();
+	private JmeNyARParam jmeARParameters;
+	private CaptureQuad cameraBG;
+	private NyARDetectMarker arDetector;
 	
+	public PatternMarkerProcessor(JmeNyARParam jmeARParameters, CaptureQuad cameraBG) {
+		this.jmeARParameters = jmeARParameters;
+		this.cameraBG = cameraBG;
+	}
+
 	/**
 	 * Update. This is called by SimpleUpdate to calculate what markers are
 	 * currently in the scene and how the nodes are affected.
@@ -28,20 +38,18 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 	 * @param detector The marker detector which is in use
 	 * @param raster The raster to use for detection
 	 */
-	public void update(NyARDetectMarker detector, INyARRgbRaster raster ){
+	public void update(INyARRgbRaster raster ){
 		int foundMarkers = 0;
 		try {
-			foundMarkers = detector.detectMarkerLite(raster, 200);
+			foundMarkers = arDetector.detectMarkerLite(raster, 200);
 			if (foundMarkers > 0 ){
 				for (int i =0; i <foundMarkers; i++){
 					for(PatternMarker m : markerList){
-						if (m.getCodeArrayPosition() == detector.getARCodeIndex(i)){
-							//trigger event based on this marker?
+						if (m.getCodeArrayPosition() == arDetector.getARCodeIndex(i)){
 							//TODO: move confidence rating
-							if (detector.getConfidence(i) > 0.5){
-							System.out.println(m.getUniqueID());
+							if (arDetector.getConfidence(i) > 0.5){
 							NyARTransMatResult src = new NyARTransMatResult();
-							detector.getTransmationMatrix(i,src);
+							arDetector.getTransmationMatrix(i,src);
 							for(AREventListener l : listeners) {
 								l.markerChanged(new MarkerChangedEvent(m, src));
 							}
@@ -146,4 +154,22 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 		// TODO Not needed as yet.
 		
 	}
+
+	public void finaliseMarkers() {
+		
+		//TODO Need to abstract the width from here
+		NyARCode[] codes = this.createARCodesList();
+		
+		try {
+			arDetector = new NyARDetectMarker(jmeARParameters, codes, new double[] {80.0, 80.0}, codes.length, cameraBG.getRaster().getBufferType());
+		}catch (NyARException e){
+			e.printStackTrace();
+		}
+		
+	}
+
+	
+	
+	
+	
 }

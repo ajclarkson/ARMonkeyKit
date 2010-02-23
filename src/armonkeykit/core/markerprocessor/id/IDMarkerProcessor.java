@@ -46,16 +46,11 @@ public class IDMarkerProcessor  implements IMarkerProcessor{
 			if (idDetector.getCurrentID()> 0 && src != null){
 				
 				String id = "" + idDetector.getCurrentID();
-				System.out.println(markerList.size());
 				for (Marker m : markerList){
-					System.out.println(m.getUniqueID() + " compared to " + id);
 					if (m.getUniqueID().equals(id)){
 						for (AREventListener l : listeners){
 							l.markerChanged(new MarkerChangedEvent(m, src));
-							
 						}
-				
-						
 					}
 				}
 			}else {
@@ -70,6 +65,7 @@ public class IDMarkerProcessor  implements IMarkerProcessor{
 			e.printStackTrace();
 		}
 	}
+	
 	
 	
 

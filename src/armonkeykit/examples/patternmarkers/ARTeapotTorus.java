@@ -7,8 +7,9 @@ import com.jme.scene.Node;
 import com.jme.scene.shape.Teapot;
 import com.jme.scene.shape.Torus;
 
-import armonkeykit.core.app.ARMonkeyPatternApp;
+import armonkeykit.core.app.ARMonkeyKitApp;
 import armonkeykit.core.app.utils.NodeRotateTranslateListener;
+import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
 import armonkeykit.core.markers.PatternMarker;
 
 /**
@@ -16,15 +17,47 @@ import armonkeykit.core.markers.PatternMarker;
  * @author Adam Clarkson
  *
  */
-public class ARTeapotTorus extends ARMonkeyPatternApp {
+public class ARTeapotTorus extends ARMonkeyKitApp {
 
+	//marker processor to be used for this application.
+	private PatternMarkerProcessor markerProcessor;
+	//event listener to use with the system
+	private NodeRotateTranslateListener rtl;
 	
 	public ARTeapotTorus() {
 		super();
 	}
 	
+	/**
+	 * This must be called in order to state what type of marker processor you want to use.
+	 * This should be initPatternProcessor for Pattern markers,
+	 * or initIDMarkerProcessor for NyID Model 2 markers.
+	 * 
+	 * Also registers EventListeners to be used by the system.
+	 */
 	@Override
-	protected void addMarkers() {
+	protected void simpleInitARSystem() {
+		markerProcessor = initPatternProcessor();
+		rtl = new NodeRotateTranslateListener();
+		markerProcessor.registerEventListener(rtl);
+	}
+	
+	@Override
+	protected void addMarkers() {	
+		/**
+		 * This creates the marker objects and registers them to the system
+		 */
+		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16, "ardata/patt.kanji");
+		markerProcessor.registerMarker(kanji);
+		
+		PatternMarker hiro = markerProcessor.createMarkerObject("hiro", 16, "ardata/patt.hiro");
+		markerProcessor.registerMarker(hiro);
+		
+		
+		/** 
+		 * Create some content to attach to the markers
+		 * 
+		 */
 		Node teapotAffectedNode = new Node("Affected Teapot Node");
 		Teapot tp = new Teapot("ShinyTeapot");
 		tp.setLocalScale(10f);
@@ -40,17 +73,21 @@ public class ARTeapotTorus extends ARMonkeyPatternApp {
 		torus.setLocalScale(10f);
 		torusAffectedNode.attachChild(torus);
 		rootNode.attachChild(torusAffectedNode);
-	
-		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16, "ardata/patt.kanji");
-		markerProcessor.registerMarker(kanji);
 		
-		PatternMarker hiro = markerProcessor.createMarkerObject("hiro", 16, "ardata/patt.hiro");
-		markerProcessor.registerMarker(hiro);
 		
-		NodeRotateTranslateListener rtl = new NodeRotateTranslateListener();
+		/**
+		 * Use the associate method of the event listener to create a relationship between a marker object 
+		 * and the ARContentNode we created for that marker.
+		 */
 		rtl.associate(kanji, teapotAffectedNode);
 		rtl.associate(hiro, torusAffectedNode);
-		markerProcessor.registerEventListener(rtl);
+		
+		
+		
+		/**
+		 * This method must be called after adding markers, to ensure that the detection list is up to date
+		 */
+		markerProcessor.finaliseMarkers();
 		
 	}
 	
@@ -62,6 +99,8 @@ public class ARTeapotTorus extends ARMonkeyPatternApp {
 		app.setConfigShowMode(ConfigShowMode.AlwaysShow);
 		app.start();
 	}
+
+
 	
 
 }

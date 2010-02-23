@@ -1,5 +1,7 @@
 package armonkeykit.core.markerprocessor;
 
+import jp.nyatla.nyartoolkit.core.raster.rgb.INyARRgbRaster;
+import jp.nyatla.nyartoolkit.core.raster.rgb.NyARRgbRaster;
 import armonkeykit.core.events.AREventListener;
 import armonkeykit.core.markers.Marker;
 
@@ -28,14 +30,5 @@ public interface IMarkerProcessor {
 	 */
 	public void deregisterMarker(Marker m);
 	
-	/**
-	 * Creates a relationship between a marker and a node. The Node already contains a model
-	 * set in the application. Here the node is registered so transformations of a marker
-	 * can be applied to the related node.
-	 * 
-	 * @param m Marker which is to be related.
-	 * @param modelNode Node which contains the content model to assign to marker m.
-	 */
-//	public abstract void createMarkerModelRelationship(Marker marker, Node modelNode);
-	
+	public void update(INyARRgbRaster raster);
 }

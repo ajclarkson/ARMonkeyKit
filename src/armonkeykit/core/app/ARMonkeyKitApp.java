@@ -3,7 +3,12 @@ package armonkeykit.core.app;
 import jp.nyatla.nyartoolkit.NyARException;
 import jp.nyatla.nyartoolkit.core.param.NyARPerspectiveProjectionMatrix;
 import jp.nyatla.nyartoolkit.qt.sample.JmeNyARParam;
+import armonkeykit.core.markerprocessor.IMarkerProcessor;
+import armonkeykit.core.markerprocessor.id.IDMarkerDetector;
+import armonkeykit.core.markerprocessor.id.IDMarkerProcessor;
+import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
 import armonkeykit.videocapture.CaptureQuad;
+import armonkeykit.videocapture.SyncObject;
 
 import com.jme.app.SimpleGame;
 import com.jme.input.NodeHandler;
@@ -25,6 +30,8 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 
 	protected JmeNyARParam jmeARParameters;
 	
+	protected IMarkerProcessor markerProcessor;
+	
 
 	public ARMonkeyKitApp() {		
 		jmeARParameters = new JmeNyARParam();
@@ -35,8 +42,23 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 			//TODO: think about this a bit
 		}
 		jmeARParameters.changeScreenSize(CAMERA_WIDTH, CAMERA_HEIGHT);
+		
+		
 	}
 
+	protected PatternMarkerProcessor initPatternProcessor(){
+		
+		PatternMarkerProcessor processor = new PatternMarkerProcessor(jmeARParameters, cameraBG);
+		markerProcessor = processor;
+		return processor;
+	}
+	
+	protected IDMarkerProcessor initIDMarkerProcessor() {
+		IDMarkerProcessor processor = new IDMarkerProcessor(new IDMarkerDetector(jmeARParameters, 46, cameraBG.getRaster().getBufferType()));
+		markerProcessor = processor;
+		return processor;
+	}
+	
 	protected void lightSetup(){
 
 		PointLight pl = new PointLight();
@@ -74,9 +96,32 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 		cam.setFrustum(ad[0], ad[1], ad[2], ad[3], ad[4], ad[5]);
 	}
 	
-	protected abstract void simpleUpdate();
+	protected void simpleUpdate(){
+		synchronized(SyncObject.getSyncObject()){
+			cameraBG.update();
+			markerProcessor.update(cameraBG.getRaster());
+		}
+		callUpdates();
+
 	
-	protected abstract void simpleInitGame();
+	}
+	protected abstract void callUpdates();
+	
+	protected abstract void addMarkers();
+	
+	protected abstract void simpleInitARSystem();
+	
+	
+	protected  void simpleInitGame(){
+		lightSetup();
+		cameraSetup();
+		simpleInitARSystem();
+		cam.setLocation(new Vector3f(0, 0, 0));
+		cam.update();
+		
+		addMarkers();
+	}
+	
 
 	
 }

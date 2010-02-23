@@ -9,8 +9,9 @@ import com.jme.math.Quaternion;
 import com.jme.math.Vector3f;
 import com.jme.scene.Node;
 
-import armonkeykit.core.app.ARMonkeyPatternApp;
+import armonkeykit.core.app.ARMonkeyKitApp;
 import armonkeykit.core.app.utils.NodeRotateTranslateListener;
+import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
 import armonkeykit.core.markers.PatternMarker;
 import armonkeykit.videocapture.video.VideoQuad;
 
@@ -21,12 +22,20 @@ import armonkeykit.videocapture.video.VideoQuad;
  * @author Andrew Hatch, Adam Clarkson
  *
  */
-public class ARVideoPlayer extends ARMonkeyPatternApp{
+public class ARVideoPlayer extends ARMonkeyKitApp{
 
 	private VideoQuad videoQuad;
+	
+	private PatternMarkerProcessor markerProcessor;
 
 	public ARVideoPlayer() {
 		super();
+	}
+	
+	@Override
+	protected void simpleInitARSystem() {
+		markerProcessor = initPatternProcessor();
+		
 	}
 	
 	@Override
@@ -65,5 +74,7 @@ public class ARVideoPlayer extends ARMonkeyPatternApp{
 		app.setConfigShowMode(ConfigShowMode.AlwaysShow);
 		app.start();
 	}
+
+	
 
 }

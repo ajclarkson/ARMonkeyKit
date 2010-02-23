@@ -12,12 +12,22 @@ import armonkeykit.core.events.AREventListener;
 import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markers.Marker;
 
+/**
+ * NodeRotateTranslateListener. An AREventListener implementation which allows association of markers to nodes, and then allows for the 
+ * translation of those nodes based on the marker translation.
+ * 
+ * @author Adam Clarkson
+ *
+ */
 public class NodeRotateTranslateListener implements AREventListener {
 
 	Map<String, Node> markerToNode = new HashMap<String,Node>();
 
 	public NodeRotateTranslateListener() {}
 
+	/**
+	 * Interface Method: See AREventListener
+	 */
 	public void associate(Marker m, Node n) {
 		markerToNode.put(m.getUniqueID(), n);
 	}
