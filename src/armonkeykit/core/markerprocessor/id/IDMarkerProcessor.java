@@ -34,7 +34,6 @@ public class IDMarkerProcessor  implements IMarkerProcessor{
 		
 	}
 
-	@Override
 	public void registerMarker(Marker m) {
 		markerList.add((NyIDMarker)m);		
 	}

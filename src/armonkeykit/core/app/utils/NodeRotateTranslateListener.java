@@ -39,7 +39,6 @@ public class NodeRotateTranslateListener implements AREventListener {
 	public void markerChanged(MarkerChangedEvent event) {
 		Node model = getNodeForMarker(event.getMarker());
 		NyARTransMatResult transMatResult = event.getTransMatResult();
-		System.out.println(event.getMarker().getUniqueID());
 		model.setLocalRotation(new Matrix3f((float) -transMatResult.m00,
 				(float) -transMatResult.m01, (float) transMatResult.m02,
 				(float) -transMatResult.m10, (float) -transMatResult.m11,

@@ -11,6 +11,7 @@ import armonkeykit.videocapture.CaptureQuad;
 import armonkeykit.videocapture.SyncObject;
 
 import com.jme.app.SimpleGame;
+import com.jme.input.MouseInput;
 import com.jme.input.NodeHandler;
 import com.jme.light.DirectionalLight;
 import com.jme.light.PointLight;
@@ -91,6 +92,7 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 		rootNode.attachChild(cameraBG);
 		
 		input = new NodeHandler(new Torus(), 10, 2);//this seems to override mouse control of camera
+		MouseInput.get().setCursorVisible(true);
 		
 		float[] ad = jmeARParameters.getCameraFrustum();
 		cam.setFrustum(ad[0], ad[1], ad[2], ad[3], ad[4], ad[5]);
