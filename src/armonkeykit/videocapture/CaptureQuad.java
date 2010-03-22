@@ -44,6 +44,13 @@ public class CaptureQuad extends Quad {
 			image.update(tex);
 		}
 	}
+	/**
+	 * Added this method for debugging openGL error
+	 * @return int textureID.
+	 */
+	public int getTexID(){
+		return tex.getTextureId();
+	}
 	
 	public QtNyARRaster_RGB getRaster() {
 		return image.getRaster();

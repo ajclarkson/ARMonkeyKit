@@ -13,17 +13,19 @@ import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markers.Marker;
 
 /**
- * NodeRotateTranslateListener. An AREventListener implementation which allows association of markers to nodes, and then allows for the 
- * translation of those nodes based on the marker translation.
+ * NodeRotateTranslateListener. An AREventListener implementation which allows
+ * association of markers to nodes, and then allows for the translation of those
+ * nodes based on the marker translation.
  * 
  * @author Adam Clarkson
- *
+ * 
  */
 public class NodeRotateTranslateListener implements AREventListener {
 
-	Map<String, Node> markerToNode = new HashMap<String,Node>();
+	Map<String, Node> markerToNode = new HashMap<String, Node>();
 
-	public NodeRotateTranslateListener() {}
+	public NodeRotateTranslateListener() {
+	}
 
 	/**
 	 * Interface Method: See AREventListener
@@ -48,12 +50,10 @@ public class NodeRotateTranslateListener implements AREventListener {
 				(float) -transMatResult.m13, (float) -transMatResult.m23);
 		model.setLocalScale(1.0f);
 
-
 	}
 
 	public void markerRemoved(Marker m) {
-		getNodeForMarker(m).setLocalTranslation(0f,0f,-100000);		
+		getNodeForMarker(m).setLocalTranslation(0f, 0f, -100000);
 	}
-
 
 }

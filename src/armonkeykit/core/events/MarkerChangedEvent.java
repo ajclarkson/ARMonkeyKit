@@ -10,6 +10,8 @@ public class MarkerChangedEvent extends AREvent{
 	public MarkerChangedEvent(Marker m, NyARTransMatResult transMatResult) {
 		this.marker = m;
 		this.transMatResult = transMatResult;
+		
+		this.marker.setTransMatResult(transMatResult);
 	}
 
 	public Marker getMarker() {

@@ -10,6 +10,7 @@ import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
 import armonkeykit.videocapture.CaptureQuad;
 import armonkeykit.videocapture.SyncObject;
 
+import com.acarter.scenemonitor.SceneMonitor;
 import com.jme.app.SimpleGame;
 import com.jme.input.MouseInput;
 import com.jme.input.NodeHandler;
@@ -23,6 +24,8 @@ import com.jme.scene.shape.Torus;
 public abstract class ARMonkeyKitApp extends SimpleGame {
 
 	protected CaptureQuad cameraBG;
+	protected boolean showCamera;
+	protected boolean showSceneViewer = false; // can be overridden in individual apps to show the scene monitor for debugging.
 
 	
 	private static final int CAMERA_WIDTH = 640;
@@ -35,6 +38,7 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 	
 
 	public ARMonkeyKitApp() {		
+		showCamera = true; //default set to show camera feed
 		jmeARParameters = new JmeNyARParam();
 		try {
 			jmeARParameters.loadARParamFromFile(PARAM_FILE);
@@ -88,8 +92,12 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 		m.fromAngleAxis((float) Math.toRadians(180), new Vector3f(0, 0, 1));
 		cameraBG.setLocalRotation(m);
 		cameraBG.setLocalTranslation(new Vector3f(0, 0, (float) -m2.m00 * 4));
-
-		rootNode.attachChild(cameraBG);
+		//set queue mode code - attempting to fix openGL error
+		//cameraBG.setRenderQueueMode(Renderer.QUEUE_ORTHO);
+		if (showCamera == true)
+		{
+			rootNode.attachChild(cameraBG);
+		}
 		
 		input = new NodeHandler(new Torus(), 10, 2);//this seems to override mouse control of camera
 		MouseInput.get().setCursorVisible(true);
@@ -100,7 +108,9 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 	
 	protected void simpleUpdate(){
 		synchronized(SyncObject.getSyncObject()){
+			
 			cameraBG.update();
+			
 			markerProcessor.update(cameraBG.getRaster());
 		}
 		callUpdates();
@@ -115,13 +125,17 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 	
 	
 	protected  void simpleInitGame(){
+		
 		lightSetup();
+		
 		cameraSetup();
 		simpleInitARSystem();
 		cam.setLocation(new Vector3f(0, 0, 0));
 		cam.update();
 		
 		addMarkers();
+		SceneMonitor.getMonitor().showViewer(showSceneViewer);
+		SceneMonitor.getMonitor().registerNode(rootNode);
 	}
 	
 

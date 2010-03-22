@@ -1,6 +1,7 @@
 package armonkeykit.core.markers;
 
 import jp.nyatla.nyartoolkit.core.NyARCode;
+import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 
 /**
  * PatternMarker Object. This is an object representation of a marker with a hardcoded representation.
@@ -13,6 +14,7 @@ public class PatternMarker implements Marker {
 	private String uid;
 	private NyARCode code;
 	private int codeArrayPosition;
+	private NyARTransMatResult transMatResult;
 //	private Node modelNode;
 
 	/**
@@ -60,6 +62,14 @@ public class PatternMarker implements Marker {
 	 */
 	public int getCodeArrayPosition() {
 		return codeArrayPosition;
+	}
+	public void setTransMatResult(NyARTransMatResult transMatResult){
+		this.transMatResult = transMatResult;
+	}
+	@Override
+	public NyARTransMatResult getTransMatResult() {
+		
+		return transMatResult;
 	}
 
 }

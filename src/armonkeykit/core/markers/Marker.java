@@ -1,5 +1,7 @@
 package armonkeykit.core.markers;
 
+import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
+
 /**
  * Interface defining common properties of different marker types which can be used
  * with the system.
@@ -14,6 +16,8 @@ public interface Marker {
 	 */
 	public String getUniqueID();
 	
+	public void setTransMatResult(NyARTransMatResult transMatResult);
+	public NyARTransMatResult getTransMatResult();
 	/**
 	 * Used to obtain the Node which is attached the marker. This node contains models which are
 	 * attached to the marker and therefore need to be translated with it.

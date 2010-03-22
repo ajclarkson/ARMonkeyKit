@@ -157,6 +157,7 @@ public class QtCaptureImage extends Image implements QtCaptureListener {
 				Util.checkGLError();
 			} catch (OpenGLException e) {
 				log.info("Error rendering video to texture. No glTexSubImage2D/OpenGL 1.2 support?");
+				System.err.println(e.getMessage());
 			}
 
 			lastupdated = framecounter;
