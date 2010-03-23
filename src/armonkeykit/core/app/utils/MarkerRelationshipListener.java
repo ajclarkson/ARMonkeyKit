@@ -10,7 +10,7 @@ import com.jme.renderer.ColorRGBA;
 import com.jme.scene.Line;
 import com.jme.scene.Node;
 
-import armonkeykit.core.events.AREventListener;
+import armonkeykit.core.events.IEventListener;
 import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markers.Marker;
 
@@ -23,7 +23,9 @@ import armonkeykit.core.markers.Marker;
  * @author Adam Clarkson
  * 
  */
-public class MarkerRelationshipListener implements AREventListener {
+//TODO Work out why only some of the lines are being drawn?
+
+public class MarkerRelationshipListener implements IEventListener {
 
 	List<MarkerDistanceRelationship> distanceRelationships = new ArrayList<MarkerDistanceRelationship>();
 
@@ -49,22 +51,22 @@ public class MarkerRelationshipListener implements AREventListener {
 				source = marker;
 				target = rel.getTarget();
 				track = true;
-			} else if (rel.getTarget().equals(marker)) {
-				source = rel.getSource();
-				target = marker;
-				track = true;
+//			} else if (rel.getTarget().equals(marker)) {
+//				source = rel.getSource();
+//				target = marker;
+//				track = true;
 			} else {
 				track = false;
 			}
-
+			Node n = rel.getNode();
 			if (track == true) {
 				NyARTransMatResult transMatResult = source.getTransMatResult();
 				NyARTransMatResult targetTransMat = new NyARTransMatResult();
 
 				targetTransMat = target.getTransMatResult();
-				Node n = rel.getNode();
+				
 				try {
-					n.detachAllChildren();
+					//n.detachAllChildren();
 
 					// store the positions of the markers as vectors for use in
 					// calculations.
@@ -99,6 +101,8 @@ public class MarkerRelationshipListener implements AREventListener {
 					n.detachAllChildren();
 				}
 
+			}else {
+				n.detachAllChildren();
 			}
 
 		}

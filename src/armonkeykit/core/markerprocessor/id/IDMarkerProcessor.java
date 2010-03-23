@@ -3,7 +3,7 @@ package armonkeykit.core.markerprocessor.id;
 import java.util.ArrayList;
 import java.util.List;
 
-import armonkeykit.core.events.AREventListener;
+import armonkeykit.core.events.IEventListener;
 import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markerprocessor.IMarkerProcessor;
 import armonkeykit.core.markers.Marker;
@@ -16,7 +16,7 @@ import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 public class IDMarkerProcessor  implements IMarkerProcessor{
 
 	private ArrayList<NyIDMarker> markerList = new ArrayList<NyIDMarker>();
-	private List<AREventListener> listeners = new ArrayList<AREventListener>();
+	private List<IEventListener> listeners = new ArrayList<IEventListener>();
 	private IDMarkerDetector idDetector;
 	
 	
@@ -29,7 +29,7 @@ public class IDMarkerProcessor  implements IMarkerProcessor{
 		
 	}
 
-	public void registerEventListener(AREventListener listener) {
+	public void registerEventListener(IEventListener listener) {
 		listeners.add(listener);
 		
 	}
@@ -47,14 +47,14 @@ public class IDMarkerProcessor  implements IMarkerProcessor{
 				String id = "" + idDetector.getCurrentID();
 				for (Marker m : markerList){
 					if (m.getUniqueID().equals(id)){
-						for (AREventListener l : listeners){
+						for (IEventListener l : listeners){
 							l.markerChanged(new MarkerChangedEvent(m, src));
 						}
 					}
 				}
 			}else {
 				for (Marker m : markerList){
-					for(AREventListener l : listeners) {
+					for(IEventListener l : listeners) {
 						l.markerRemoved(m);
 					}
 				}

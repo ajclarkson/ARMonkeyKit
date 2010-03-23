@@ -3,7 +3,7 @@ package armonkeykit.core.markerprocessor.pattern;
 import java.util.ArrayList;
 import java.util.List;
 
-import armonkeykit.core.events.AREventListener;
+import armonkeykit.core.events.IEventListener;
 import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markerprocessor.IMarkerProcessor;
 import armonkeykit.core.markers.Marker;
@@ -17,20 +17,40 @@ import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 import jp.nyatla.nyartoolkit.detector.NyARDetectMarker;
 import jp.nyatla.nyartoolkit.qt.sample.JmeNyARParam;
 
+/**
+ * An implementation of the Marker Processor Interface. This implementation deals with the processing of markers which use pattern files 
+ * as a means of detection. 
+ * 
+ * @author Adam Clarkson
+ *
+ */
 public class PatternMarkerProcessor implements IMarkerProcessor {
 
-	// A list which stores all of the PatternMarker objects currently in use
+	/**
+	 * markerList - a list of all 
+	 */
 	private ArrayList<PatternMarker> markerList = new ArrayList<PatternMarker>();
-	private List<AREventListener> listeners = new ArrayList<AREventListener>();
+	// 
+	private List<IEventListener> listeners = new ArrayList<IEventListener>();
 	private JmeNyARParam jmeARParameters;
 	private CaptureQuad cameraBG;
 	private NyARDetectMarker arDetector;
+	private double defaultConfidenceRating = 0.5;
 
 	public PatternMarkerProcessor(JmeNyARParam jmeARParameters,
 			CaptureQuad cameraBG) {
 		this.jmeARParameters = jmeARParameters;
 		this.cameraBG = cameraBG;
 	}
+	
+	public PatternMarkerProcessor(JmeNyARParam jmeARParameters,
+			CaptureQuad cameraBG, double defaultConfidenceRating) {
+		this.jmeARParameters = jmeARParameters;
+		this.cameraBG = cameraBG;
+		this.defaultConfidenceRating = defaultConfidenceRating;
+		
+	}
+	//TODO update documentation of this class
 
 	/**
 	 * Update. This is called by SimpleUpdate to calculate what markers are
@@ -44,7 +64,7 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 	public void update(INyARRgbRaster raster) {
 		int foundMarkers = 0;
 		try {
-			foundMarkers = arDetector.detectMarkerLite(raster, 200);
+			foundMarkers = arDetector.detectMarkerLite(raster, 100);
 			if (foundMarkers > 0) {
 
 				for (int i = 0; i < foundMarkers; i++) {
@@ -52,17 +72,18 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 					for (PatternMarker m : markerList) {
 						if (m.getCodeArrayPosition() == arDetector
 								.getARCodeIndex(i)) {
-							// TODO: move confidence rating
-							if (arDetector.getConfidence(i) > 0.5) {
+							// TODO: maybe allow markers to specify their own confidence rating?
+							
+							if (arDetector.getConfidence(i) > defaultConfidenceRating) {
 								NyARTransMatResult src = new NyARTransMatResult();
 								arDetector.getTransmationMatrix(i, src);
 
-								for (AREventListener l : listeners) {
+								for (IEventListener l : listeners) {
 									l.markerChanged(new MarkerChangedEvent(m,
 											src));
 								}
 							} else {
-								for (AREventListener l : listeners) {
+								for (IEventListener l : listeners) {
 									// TODO: consider making event for this
 									l.markerRemoved(m);
 								}
@@ -72,7 +93,7 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 				}
 			} else {
 				for (PatternMarker m : markerList) {
-					for (AREventListener l : listeners) {
+					for (IEventListener l : listeners) {
 						l.markerRemoved(m);
 					}
 				}
@@ -98,7 +119,7 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 	 *         returns null if a problem exists
 	 */
 	public PatternMarker createMarkerObject(String uid, int segments,
-			String path) {
+			String path, double markerWidth) {
 
 		NyARCode code = null;
 		try {
@@ -111,7 +132,7 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 		if (code == null)
 			return null;
 		else
-			return new PatternMarker(uid, code);
+			return new PatternMarker(uid, code, markerWidth);
 
 	}
 
@@ -149,7 +170,7 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 	public NyARCode[] createARCodesList() {
 
 		NyARCode[] codes = new NyARCode[markerList.size()];
-
+		
 		for (int i = 0; i < markerList.size(); i++) {
 
 			codes[i] = markerList.get(i).getCode();
@@ -161,7 +182,7 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 		return codes;
 	}
 
-	public void registerEventListener(AREventListener listener) {
+	public void registerEventListener(IEventListener listener) {
 		listeners.add(listener);
 	}
 
@@ -176,15 +197,22 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 
 	public void finaliseMarkers() {
 
-		// TODO Need to abstract the width from here
+		// TODO Need to document properly
 		NyARCode[] codes = this.createARCodesList();
+		double[] markerWidths = new double[markerList.size()];
+		
+		for (int i=0; i<markerList.size(); i++){
+			markerWidths[i] = markerList.get(i).getWidth();
+		}
+		
 
 		try {
 			arDetector = new NyARDetectMarker(jmeARParameters, codes,
-					new double[] { 80.0, 80.0 }, codes.length, cameraBG
+					markerWidths, codes.length, cameraBG
 							.getRaster().getBufferType());
 		} catch (NyARException e) {
 			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 
 	}

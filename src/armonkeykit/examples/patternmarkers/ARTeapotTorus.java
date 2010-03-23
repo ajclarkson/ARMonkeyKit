@@ -20,7 +20,8 @@ import armonkeykit.core.markers.PatternMarker;
  * 
  */
 public class ARTeapotTorus extends ARMonkeyKitApp {
-
+//TODO update documentation
+	
 	// marker processor to be used for this application.
 	private PatternMarkerProcessor markerProcessor;
 	// event listener to use with the system
@@ -52,11 +53,11 @@ public class ARTeapotTorus extends ARMonkeyKitApp {
 		 * This creates the marker objects and registers them to the system
 		 */
 		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16,
-				"ardata/patt.kanji");
+				"ardata/patt.kanji", 80);
 		markerProcessor.registerMarker(kanji);
 
 		PatternMarker hiro = markerProcessor.createMarkerObject("hiro", 16,
-				"ardata/patt.hiro");
+				"ardata/patt.hiro", 80);
 		markerProcessor.registerMarker(hiro);
 
 		/**

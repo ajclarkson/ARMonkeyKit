@@ -8,7 +8,7 @@ import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 import com.jme.math.Matrix3f;
 import com.jme.scene.Node;
 
-import armonkeykit.core.events.AREventListener;
+import armonkeykit.core.events.IEventListener;
 import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markers.Marker;
 
@@ -20,16 +20,14 @@ import armonkeykit.core.markers.Marker;
  * @author Adam Clarkson
  * 
  */
-public class NodeRotateTranslateListener implements AREventListener {
+public class NodeRotateTranslateListener implements IEventListener {
 
 	Map<String, Node> markerToNode = new HashMap<String, Node>();
 
 	public NodeRotateTranslateListener() {
 	}
 
-	/**
-	 * Interface Method: See AREventListener
-	 */
+	
 	public void associate(Marker m, Node n) {
 		markerToNode.put(m.getUniqueID(), n);
 	}

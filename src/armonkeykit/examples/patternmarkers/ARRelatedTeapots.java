@@ -1,10 +1,6 @@
 package armonkeykit.examples.patternmarkers;
 
-import com.jme.math.FastMath;
-import com.jme.math.Quaternion;
-import com.jme.math.Vector3f;
 import com.jme.scene.Node;
-import com.jme.scene.shape.Teapot;
 
 import armonkeykit.core.app.ARMonkeyKitApp;
 import armonkeykit.core.app.utils.MarkerRelationshipListener;
@@ -32,43 +28,41 @@ public class ARRelatedTeapots extends ARMonkeyKitApp {
 	
 	@Override
 	protected void addMarkers() {
-		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16, "ardata/patt.kanji");
-		markerProcessor.registerMarker(kanji);
+		PatternMarker houses = markerProcessor.createMarkerObject("houses", 64, "ardata/patt.houses75", 75);
+		markerProcessor.registerMarker(houses);
 		
-		PatternMarker hiro = markerProcessor.createMarkerObject("hiro", 16, "ardata/patt.hiro");
-		markerProcessor.registerMarker(hiro);
+		PatternMarker leaf = markerProcessor.createMarkerObject("leaf", 64, "ardata/patt.leaf75", 75);
+		markerProcessor.registerMarker(leaf);
 		
-		Node kanjiTeapotAffectedNode = new Node(" Kanji Affected Teapot Node");
-		Teapot tp = new Teapot("ShinyTeapot");
-		tp.setLocalScale(10f);
-		// rotate our teapot so its base sits on the marker
-		Quaternion q = new Quaternion();
-		q = q.fromAngleAxis(-FastMath.PI/2,new Vector3f(1f,0f,0f));
-		tp.setLocalRotation(q);
+		PatternMarker house = markerProcessor.createMarkerObject("house", 64, "ardata/patt.house75", 75);
+		markerProcessor.registerMarker(house);
 		
-		kanjiTeapotAffectedNode.attachChild(tp);
-		rootNode.attachChild(kanjiTeapotAffectedNode);
+		Node housesAffectedTeapotNode = createTestTeapot();
+		rootNode.attachChild(housesAffectedTeapotNode);
 		
-		Node hiroTeapotAffectedNode = new Node("Affected Teapot Node");
-		Teapot htp = new Teapot("ShinyTeapot");
-		htp.setLocalScale(10f);
-		// rotate our teapot so its base sits on the marker
-		Quaternion qt = new Quaternion();
-		qt = qt.fromAngleAxis(-FastMath.PI/2,new Vector3f(1f,0f,0f));
-		htp.setLocalRotation(qt);
-		
-		hiroTeapotAffectedNode.attachChild(htp);
-		rootNode.attachChild(hiroTeapotAffectedNode);
+		Node leafTeapotAffectedNode = createTestTeapot();
+		rootNode.attachChild(leafTeapotAffectedNode);
 
-		rtl.associate(kanji,kanjiTeapotAffectedNode);
-		rtl.associate(hiro,hiroTeapotAffectedNode);
+		Node houseTeapotAffectedNode = createTestTeapot();
+		rootNode.attachChild(houseTeapotAffectedNode);
+		
+		rtl.associate(houses,housesAffectedTeapotNode);
+		rtl.associate(leaf,leafTeapotAffectedNode);
+		rtl.associate(house,houseTeapotAffectedNode);
+		
 		
 		/*
 		 * A new node must be created for each relationship. It is this node which will be used in order to display
 		 * the visual feedback of the link (in this case, a line)
 		 */
-		Node hiroKanjiRel =  new Node("Kanji>Hiro Relationship");
-		rootNode.attachChild(hiroKanjiRel);
+		Node housesLeafRel =  new Node("Houses>Leaf Relationship");
+		rootNode.attachChild(housesLeafRel);
+//		
+		Node houseLeafRel = new Node("House > Leaf Relationship");
+		rootNode.attachChild(houseLeafRel);
+//		
+		Node housesHouseRel = new Node("Houses >House Relationship");
+		rootNode.attachChild(housesHouseRel);
 		
 		/**
 		 * The distance relationship method takes two markers as parameters, along with the node which is to be associated with this
@@ -77,8 +71,9 @@ public class ARRelatedTeapots extends ARMonkeyKitApp {
 		 * Note: you only have to specify the relationship one way, the system automatically reverses it for you. So here the system
 		 * will also create a relationship for hiro > kanji
 		 */
-		mrl.createDistanceRelationship(kanji, hiro, hiroKanjiRel);
-		
+		mrl.createDistanceRelationship(houses, leaf, housesLeafRel);
+		mrl.createDistanceRelationship(house, leaf, houseLeafRel);
+		mrl.createDistanceRelationship(houses, house, housesHouseRel);
 		markerProcessor.finaliseMarkers();
 		
 	}
@@ -91,7 +86,8 @@ public class ARRelatedTeapots extends ARMonkeyKitApp {
 
 	@Override
 	protected void simpleInitARSystem() {
-		markerProcessor = initPatternProcessor();
+//		showCamera = false;
+		markerProcessor = initPatternProcessor(0.3);
 		rtl = new NodeRotateTranslateListener();
 		mrl = new MarkerRelationshipListener();
 		markerProcessor.registerEventListener(rtl);

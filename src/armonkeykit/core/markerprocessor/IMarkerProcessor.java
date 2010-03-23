@@ -1,7 +1,7 @@
 package armonkeykit.core.markerprocessor;
 
 import jp.nyatla.nyartoolkit.core.raster.rgb.INyARRgbRaster;
-import armonkeykit.core.events.AREventListener;
+import armonkeykit.core.events.IEventListener;
 import armonkeykit.core.markers.Marker;
 
 /**
@@ -14,7 +14,7 @@ public interface IMarkerProcessor {
 	/**
 	 * Registering an Event Listener for the system. 
 	 */
-	public void registerEventListener(AREventListener listener);
+	public void registerEventListener(IEventListener listener);
 	
 	/**
 	 * Register a marker for use with the system. The marker will not be detected unless

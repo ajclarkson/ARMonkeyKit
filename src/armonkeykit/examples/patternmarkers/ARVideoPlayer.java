@@ -53,7 +53,7 @@ public class ARVideoPlayer extends ARMonkeyKitApp{
 		videoQuad.setLocalRotation(qvq);
 		videoAffectedNode.attachChild(videoQuad);
 		rootNode.attachChild(videoAffectedNode);
-		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16, "ardata/patt.kanji");
+		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16, "ardata/patt.kanji", 80);
 		markerProcessor.registerMarker(kanji);
 		
 		NodeRotateTranslateListener rtl = new NodeRotateTranslateListener();

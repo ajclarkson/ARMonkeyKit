@@ -10,31 +10,25 @@ import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
  *
  */
 public class PatternMarker implements Marker {
-
+//TODO update documentation to reflect marker width changes
+	
 	private String uid;
 	private NyARCode code;
 	private int codeArrayPosition;
 	private NyARTransMatResult transMatResult;
-//	private Node modelNode;
+	private double width;
 
 	/**
 	 * Create a new PatternMarker Object. 
 	 * @param uid Unique Identifier
 	 * @param code NyARCode specifying the segments and filepath
 	 */
-	public PatternMarker(String uid, NyARCode code) {
+	public PatternMarker(String uid, NyARCode code, double markerWidth) {
 		this.uid = uid;
 		this.code = code;
+		this.width = markerWidth;
 	}
 	
-//	public void setModelNode(Node modelNode){
-//		this.modelNode = modelNode;
-//	}
-//	
-//	public Node getModelNode() {
-//		return modelNode;
-//		
-//	}
 	public String getUniqueID() {
 		return uid;
 	}
@@ -70,6 +64,14 @@ public class PatternMarker implements Marker {
 	public NyARTransMatResult getTransMatResult() {
 		
 		return transMatResult;
+	}
+	
+	public void setWidth(double width) {
+		this.width = width;
+	}
+	
+	public double getWidth(){
+		return this.width;
 	}
 
 }
