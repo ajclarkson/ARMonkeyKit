@@ -38,6 +38,7 @@ public class NodeRotateTranslateListener implements IEventListener {
 
 	public void markerChanged(MarkerChangedEvent event) {
 		Node model = getNodeForMarker(event.getMarker());
+		if(model == null) return;
 		NyARTransMatResult transMatResult = event.getTransMatResult();
 		model.setLocalRotation(new Matrix3f((float) -transMatResult.m00,
 				(float) -transMatResult.m01, (float) transMatResult.m02,
@@ -47,11 +48,11 @@ public class NodeRotateTranslateListener implements IEventListener {
 		model.setLocalTranslation((float) -transMatResult.m03,
 				(float) -transMatResult.m13, (float) -transMatResult.m23);
 		model.setLocalScale(1.0f);
-
 	}
 
 	public void markerRemoved(Marker m) {
-		getNodeForMarker(m).setLocalTranslation(0f, 0f, -100000);
+		Node n = getNodeForMarker(m);
+		if(n != null) n.setLocalTranslation(0f, 0f, -100000);
 	}
 
 }

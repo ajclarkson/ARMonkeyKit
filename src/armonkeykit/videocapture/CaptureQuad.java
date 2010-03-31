@@ -13,7 +13,7 @@ import com.jme.system.DisplaySystem;
 
 public class CaptureQuad extends Quad {
 	private static final long serialVersionUID = 2066861456419104457L;
-	
+
 	private QtCaptureImage image;
 	private Texture2D tex;
 
@@ -22,7 +22,7 @@ public class CaptureQuad extends Quad {
 		try {
 			image = new QtCaptureImage();
 			image.initializeCamera(camWidth, camHeight, frameRate);
-			tex = new Texture2D();	
+			tex = new Texture2D();
 			tex.setMinificationFilter(MinificationFilter.Trilinear);
 			tex.setMagnificationFilter(MagnificationFilter.Bilinear);
 			tex.setImage(image);			
@@ -38,24 +38,29 @@ public class CaptureQuad extends Quad {
 		start();
 		// could, at this point, resize to fit height to current width?
 	}
-	
+
 	public void update() {
-		if(image != null) {
+		// update if we have an image with a valid texture id
+		if(image != null && tex != null && tex.getTextureId() != 0) {
 			image.update(tex);
 		}
 	}
+	
 	/**
-	 * Added this method for debugging openGL error
+	 * Get the id of the texture used in the video capture
 	 * @return int textureID.
 	 */
 	public int getTexID(){
 		return tex.getTextureId();
 	}
-	
+
 	public QtNyARRaster_RGB getRaster() {
 		return image.getRaster();
 	}
 
+	/**
+	 * Start capturing from the camera.
+	 */
 	public void start() {
 		if(image != null) {
 			try {

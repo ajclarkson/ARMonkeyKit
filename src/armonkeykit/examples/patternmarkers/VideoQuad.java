@@ -1,4 +1,4 @@
-package armonkeykit.videocapture.video;
+package armonkeykit.examples.patternmarkers;
 
 import java.net.URL;
 

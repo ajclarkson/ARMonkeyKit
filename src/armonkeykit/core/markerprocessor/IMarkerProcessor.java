@@ -18,16 +18,26 @@ public interface IMarkerProcessor {
 	
 	/**
 	 * Register a marker for use with the system. The marker will not be detected unless
-	 * it is within this list.
+	 * it is within this list. Marker is not guaranteed to be detected until
+	 * finaliseMarkers is called.
 	 * @param m Marker to add to the list
 	 */
 	public void registerMarker(Marker m);
 	
 	/**
-	 * Remove a marker from the system.
+	 * Any changes to registered markers need to be committed by calling this method.
+	 * Any changes to registered markers are not guaranteed to be effective until
+	 * this method is called.
+	 */
+	public void finaliseMarkers();
+	
+	/**
+	 * Remove a marker from the system. The changes are not guaranteed to be made
+	 * until finaliseMarkers is called.
 	 * @param m Marker to remove
 	 */
 	public void deregisterMarker(Marker m);
 	
 	public void update(INyARRgbRaster raster);
+
 }

@@ -8,12 +8,13 @@ import armonkeykit.core.markerprocessor.id.IDMarkerDetector;
 import armonkeykit.core.markerprocessor.id.IDMarkerProcessor;
 import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
 import armonkeykit.videocapture.CaptureQuad;
-import armonkeykit.videocapture.SyncObject;
 
 import com.acarter.scenemonitor.SceneMonitor;
-import com.jme.app.SimpleGame;
+import com.jme.app.AbstractGame;
+import com.jme.app.BaseSimpleGame;
+import com.jme.image.Texture;
+import com.jme.input.InputHandler;
 import com.jme.input.MouseInput;
-import com.jme.input.NodeHandler;
 import com.jme.light.DirectionalLight;
 import com.jme.light.PointLight;
 import com.jme.math.FastMath;
@@ -21,9 +22,11 @@ import com.jme.math.Matrix3f;
 import com.jme.math.Quaternion;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
+import com.jme.renderer.Renderer;
 import com.jme.scene.Node;
+import com.jme.scene.Spatial.CullHint;
 import com.jme.scene.shape.Teapot;
-import com.jme.scene.shape.Torus;
+import com.jme.util.geom.Debugger;
 /**
  * ARMonkeyKitApp is the abstract base class for all applications using the ARMonkeyKit framework.
  * This class stores information regarding:
@@ -41,7 +44,7 @@ import com.jme.scene.shape.Torus;
  * 
  *
  */
-public abstract class ARMonkeyKitApp extends SimpleGame {
+public abstract class ARMonkeyKitApp extends BaseSimpleGame {
 
 	/**
 	 * The Quad which provides the background texture for showing live camera feed in application.
@@ -52,7 +55,7 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 	 * Defaults to true. 
 	 */
 	protected boolean showCamera = true;
-	
+
 	/**
 	 * Sets the status of SceneMonitor (a useful tool for debugging scene graph problems visually).
 	 * Defaults to false as it is primarily a debugging tool.
@@ -63,12 +66,12 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 	 * NyARParameters for jMonkeyEngine from the NyARToolkit QuickTime Samples. 
 	 */
 	protected JmeNyARParam jmeARParameters;
-	
+
 	/**
 	 * The marker processor which is used to perform detection and update tasks. 
 	 */
 	protected IMarkerProcessor markerProcessor;
-	
+
 	private static final int CAMERA_WIDTH = 640;
 	private static final int CAMERA_HEIGHT = 480;
 	private final String PARAM_FILE = "ardata/camera_para.dat";
@@ -85,8 +88,8 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 			//TODO: think about this a bit
 		}
 		jmeARParameters.changeScreenSize(CAMERA_WIDTH, CAMERA_HEIGHT);
-		
-		
+
+
 	}
 	/**
 	 * Initialises a new PatternMarkerProcessor using the camera configuration established in the class constructor.
@@ -97,12 +100,11 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 	 * @return markerProcessor instance of PatternMarkerProcessor
 	 */
 	protected PatternMarkerProcessor initPatternProcessor(){
-		
 		PatternMarkerProcessor processor = new PatternMarkerProcessor(jmeARParameters, cameraBG);
 		markerProcessor = processor;
 		return processor;
 	}
-	
+
 	/**
 	 * Initialises a new PatternMarkerProcessor using the default system settings, but allowing the user to specify a confidence
 	 * rating for the marker detection process.
@@ -116,7 +118,7 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 		markerProcessor = processor;
 		return processor;
 	}
-	
+
 	/**
 	 * Initialises a new IDMarkerProcessor using default system settings.
 	 * This method must be called if the application is to make use of NyIDModel2 marker
@@ -129,7 +131,7 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 		markerProcessor = processor;
 		return processor;
 	}
-	
+
 	/**
 	 * Augments the default scene graph with a basic lighting setup. 
 	 */
@@ -161,42 +163,41 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 		cameraBG = new CaptureQuad("Background", CAMERA_WIDTH, CAMERA_HEIGHT, 60f);
 		cameraBG.updateGeometry(CAMERA_WIDTH *4 , CAMERA_HEIGHT *4);
 		cameraBG.setCastsShadows(false);
+		cameraBG.setCullHint(CullHint.Never);
 		Matrix3f m = new Matrix3f();
 		m.fromAngleAxis((float) Math.toRadians(180), new Vector3f(0, 0, 1));
 		cameraBG.setLocalRotation(m);
 		cameraBG.setLocalTranslation(new Vector3f(0, 0, (float) -m2.m00 * 4));
-		//set queue mode code - attempting to fix openGL error
-		//cameraBG.setRenderQueueMode(Renderer.QUEUE_ORTHO);
+
 		if (showCamera == true)
 		{
 			rootNode.attachChild(cameraBG);
 		}
-		
-		input = new NodeHandler(new Torus(), 10, 2);//this seems to override mouse control of camera
+
+		input = new InputHandler();
 		MouseInput.get().setCursorVisible(true);
-		
+
 		float[] ad = jmeARParameters.getCameraFrustum();
+		for(int i = 0; i < 6; i++) {
+			System.out.println(ad[i]);
+		}
 		cam.setFrustum(ad[0], ad[1], ad[2], ad[3], ad[4], ad[5]);
+		cam.update();
 	}
-	
+
 	/**
 	 * SimpleUpdate is a method from the jME class SimpleGame, which ARMonkeyKitApp extends, dealing with code which must be 
 	 * executed every time there is a frame update. In the case of ARMonkeyKitApp the camera texture must be updated, along with
 	 * all marker detection and processing.
 	 */
 	protected void simpleUpdate(){
-		synchronized(SyncObject.getSyncObject()){
-			if (showCamera == true){
-				cameraBG.update();
-			}
-			
+		if (showCamera == true){
+			cameraBG.update();
 			markerProcessor.update(cameraBG.getRaster());
 		}
 		callUpdates();
-
-	
 	}
-	
+
 	/**
 	 * Utility method allowing fast creation of a default teapot attached to it's own scene Node. This allows rapid prototyping
 	 * for example programs with content without having to replicate the code many times.
@@ -210,47 +211,108 @@ public abstract class ARMonkeyKitApp extends SimpleGame {
 		Quaternion q = new Quaternion();
 		q = q.fromAngleAxis(-FastMath.PI/2,new Vector3f(1f,0f,0f));
 		tp.setLocalRotation(q);
-		
+
 		teapotAffectedNode.attachChild(tp);
-		
+
 		return teapotAffectedNode;
 	}
-	/**
-	 * Allows the user to specify further code which must take place on a frame by frame basis. This will happen after the code which
-	 * is in simpleUpdate.
-	 */
-	protected abstract void callUpdates();
-	
-	/**
-	 * This marker must be overridden by all applications as it handles the code for registering the markers which the user
-	 * wants the application to detect. 
-	 */
-	protected abstract void addMarkers();
-	
-	/**
-	 * Abstract method which should contain all of the code for creating the marker processors and event listeners which are needed by the
-	 * system.
-	 */
-	protected abstract void simpleInitARSystem();
-	
+
+
 	/**
 	 * Handles the order in which everything is created from the lights and cameras to user specified code for adding markers. 
 	 * Performs the first camera update to start the system.
 	 */
-	protected  void simpleInitGame(){
-		
+	protected void simpleInitGame(){
+		rootNode.setCullHint(CullHint.Never);
 		lightSetup();
-		
+
 		cameraSetup();
 		simpleInitARSystem();
 		cam.setLocation(new Vector3f(0, 0, 0));
 		cam.update();
-		
+
 		addMarkers();
 		SceneMonitor.getMonitor().showViewer(showSceneViewer);
 		SceneMonitor.getMonitor().registerNode(rootNode);
 	}
 	
-
 	
+    /**
+     * Called every frame to update scene information.
+     * 
+     * @param interpolation
+     *            unused in this implementation
+     * @see BaseSimpleGame#update(float interpolation)
+     */
+    protected final void update(float interpolation) {
+        super.update(interpolation);
+
+        if ( !pause ) {
+            /** Call simpleUpdate in any derived classes of SimpleGame. */
+            simpleUpdate();
+
+            /** Update controllers/render states/transforms/bounds for rootNode. */
+            rootNode.updateGeometricState(tpf, true);
+            statNode.updateGeometricState(tpf, true);
+        }
+        
+        if(showSceneViewer) {
+        	SceneMonitor.getMonitor().updateViewer(interpolation);
+        }
+    }
+
+    /**
+     * This is called every frame in BaseGame.start(), after update()
+     * 
+     * @param interpolation
+     *            unused in this implementation
+     * @see AbstractGame#render(float interpolation)
+     */
+    protected final void render(float interpolation) {
+        super.render(interpolation);
+
+        Renderer r = display.getRenderer();
+
+        /** Draw the rootNode and all its children. */
+        r.draw(rootNode);
+        
+        /** Call simpleRender() in any derived classes. */
+        simpleRender();
+        
+        /** Draw the stats node to show our stat charts. */
+        r.draw(statNode);
+        if(showSceneViewer) {
+        	SceneMonitor.getMonitor().renderViewer(r);
+        }
+        doDebug(r);
+    }
+
+    @Override
+    protected void doDebug(Renderer r) {
+        super.doDebug(r);
+
+        if (showDepth) {
+            r.renderQueue();
+            Debugger.drawBuffer(Texture.RenderToTextureType.Depth, Debugger.NORTHEAST, r);
+        }
+    }
+    
+	/**
+	 * Allows the user to specify further code which must take place on a frame by frame basis. This will happen after the code which
+	 * is in simpleUpdate.
+	 */
+	protected abstract void callUpdates();
+
+	/**
+	 * This marker must be overridden by all applications as it handles the code for registering the markers which the user
+	 * wants the application to detect. 
+	 */
+	protected abstract void addMarkers();
+
+	/**
+	 * Abstract method which should contain all of the code for creating the marker processors and event listeners which are needed by the
+	 * system.
+	 */
+	protected abstract void simpleInitARSystem();
+
 }

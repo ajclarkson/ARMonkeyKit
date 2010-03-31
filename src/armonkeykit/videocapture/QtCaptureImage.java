@@ -136,8 +136,8 @@ public class QtCaptureImage extends Image implements QtCaptureListener {
 	}
 
 	public boolean update(Texture texture) {
-
-		synchronized(SyncObject.getSyncObject()) {
+		
+		synchronized(this) {
 
 			if(buffer == null) {
 				return false;
@@ -147,10 +147,11 @@ public class QtCaptureImage extends Image implements QtCaptureListener {
 			if(initAndScaleTexture) {
 				scaleTexture(texture);
 			}
+			
 
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureId());
 			GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, videowidth, videoheight, pixelformat, dataformat, buffer);
-
+			
 
 
 			try {
@@ -174,7 +175,7 @@ public class QtCaptureImage extends Image implements QtCaptureListener {
 
 	public void onUpdateBuffer(byte[] pixels)
 	{
-		synchronized(SyncObject.getSyncObject()) {
+		synchronized(this) {
 			if(buffer == null) {
 				buffer = BufferUtils.createByteBuffer(getWidth()*getHeight()*3);
 			}

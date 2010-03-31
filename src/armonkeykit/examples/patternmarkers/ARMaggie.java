@@ -1,12 +1,16 @@
 package armonkeykit.examples.patternmarkers;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URL;
+
+
 import com.jme.bounding.BoundingSphere;
-import com.jme.math.FastMath;
-import com.jme.math.Quaternion;
-import com.jme.math.Vector3f;
 import com.jme.scene.Node;
-import com.jme.scene.shape.Teapot;
-import com.jme.scene.shape.Torus;
+import com.jme.util.export.binary.BinaryImporter;
+import com.jmex.model.converters.FormatConverter;
+import com.jmex.model.converters.ObjToJme;
 
 import armonkeykit.core.app.ARMonkeyKitApp;
 import armonkeykit.core.app.utils.NodeRotateTranslateListener;
@@ -20,18 +24,18 @@ import armonkeykit.core.markers.PatternMarker;
  * @author Adam Clarkson
  * 
  */
-public class ARTeapotTorus extends ARMonkeyKitApp {
-//TODO update documentation
-	
+public class ARMaggie extends ARMonkeyKitApp {
+	//TODO update documentation
+
 	// marker processor to be used for this application.
 	private PatternMarkerProcessor markerProcessor;
 	// event listener to use with the system
 	private NodeRotateTranslateListener rtl;
 
-	public ARTeapotTorus() {
+	public ARMaggie() {
 		super();
 		//showCamera = false; // enable or disable camera feed
-	    showSceneViewer = true; // enable or disable SceneMonitor
+		showSceneViewer = true; // enable or disable SceneMonitor
 	}
 
 	/**
@@ -65,34 +69,39 @@ public class ARTeapotTorus extends ARMonkeyKitApp {
 		 * Create some content to attach to the markers
 		 * 
 		 */
-		Node teapotAffectedNode = new Node("Affected Teapot Node");
-		Teapot tp = new Teapot("ShinyTeapot");
-		tp.setModelBound(new BoundingSphere());
-		tp.updateModelBound();
-		tp.setLocalScale(10f);
-		// rotate our teapot so its base sits on the marker
-		Quaternion q = new Quaternion();
-		q = q.fromAngleAxis(-FastMath.PI / 2, new Vector3f(1f, 0f, 0f));
-		tp.setLocalRotation(q);
+		Node arAffectedNode = new Node("hiroAffectedARNode");
+		rootNode.attachChild(arAffectedNode);
+		URL model=this.getClass().getResource("maggie.obj");
 
-		teapotAffectedNode.attachChild(tp);
-		rootNode.attachChild(teapotAffectedNode);
+		// Create something to convert .obj format to .jme
+		FormatConverter converter=new ObjToJme();
+		// Point the converter to where it will find the .mtl file from
+		converter.setProperty("mtllib", model);
 
-		Node torusAffectedNode = new Node("Affected Torus Node");
-		Torus torus = new Torus("Torus", 12, 40, 1.5f, 3f);
-		torus.setLocalScale(10f);
-		torus.setModelBound(new BoundingSphere());
-		torus.updateModelBound();
-		torusAffectedNode.attachChild(torus);
-		rootNode.attachChild(torusAffectedNode);
+		// This byte array will hold my .jme file
+		ByteArrayOutputStream BO=new ByteArrayOutputStream();
+		try {
+			// Use the format converter to convert .obj to .jme
+			converter.convert(model.openStream(), BO);
+			Node maggie=(Node)BinaryImporter.getInstance().load(new ByteArrayInputStream(BO.toByteArray()));
+			// shrink this baby down some
+			maggie.setLocalScale(.2f);			
+			maggie.setModelBound(new BoundingSphere());
+			maggie.updateModelBound();
+			maggie.setLocalTranslation(0, 0, -30);
+			// Put her on the scene graph
+
+			arAffectedNode.attachChild(maggie);
+		} catch (IOException e) {   // Just in case anything happens
+			System.exit(1);
+		}
 
 		/**
 		 * Use the associate method of the event listener to create a
 		 * relationship between a marker object and the ARContentNode we created
 		 * for that marker.
 		 */
-		rtl.associate(kanji, teapotAffectedNode);
-		rtl.associate(hiro, torusAffectedNode);
+		rtl.associate(hiro, arAffectedNode);
 
 		/**
 		 * This method must be called after adding markers, to ensure that the
@@ -107,7 +116,7 @@ public class ARTeapotTorus extends ARMonkeyKitApp {
 	}
 
 	public static void main(String[] args) {
-		ARTeapotTorus app = new ARTeapotTorus();
+		ARMaggie app = new ARMaggie();
 		app.setConfigShowMode(ConfigShowMode.AlwaysShow);
 		app.start();
 	}

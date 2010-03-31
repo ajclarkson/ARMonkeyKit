@@ -13,7 +13,6 @@ import armonkeykit.core.app.ARMonkeyKitApp;
 import armonkeykit.core.app.utils.NodeRotateTranslateListener;
 import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
 import armonkeykit.core.markers.PatternMarker;
-import armonkeykit.videocapture.video.VideoQuad;
 
 /**
  * ARVideoPlayer. An example program which loads in a video file, then plays it back in a player attached to a pattern marker.
@@ -55,6 +54,7 @@ public class ARVideoPlayer extends ARMonkeyKitApp{
 		rootNode.attachChild(videoAffectedNode);
 		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16, "ardata/patt.kanji", 80);
 		markerProcessor.registerMarker(kanji);
+		markerProcessor.finaliseMarkers();
 		
 		NodeRotateTranslateListener rtl = new NodeRotateTranslateListener();
 		rtl.associate(kanji, videoAffectedNode);

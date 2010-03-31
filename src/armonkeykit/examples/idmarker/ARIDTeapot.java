@@ -5,6 +5,7 @@ import com.jme.math.Quaternion;
 import com.jme.math.Vector3f;
 import com.jme.scene.Node;
 import com.jme.scene.shape.Teapot;
+import com.jme.scene.shape.Torus;
 
 import armonkeykit.core.app.ARMonkeyKitApp;
 import armonkeykit.core.app.utils.NodeRotateTranslateListener;
@@ -41,8 +42,17 @@ public class ARIDTeapot extends ARMonkeyKitApp {
 		rootNode.attachChild(teapotAffectedNode);
 		markerProcessor.registerMarker(marker);
 
+		NyIDMarker marker2 = new NyIDMarker(304);
+		Node torusAffectedNode = new Node("Affected Torus Node");
+		Torus torus = new Torus("Torus", 12, 40, 1.5f, 3f);
+		torus.setLocalScale(10f);
+		torusAffectedNode.attachChild(torus);
+		rootNode.attachChild(torusAffectedNode);
+		markerProcessor.registerMarker(marker2);
+		
 		NodeRotateTranslateListener rtl = new NodeRotateTranslateListener();
 		rtl.associate(marker, teapotAffectedNode);
+		rtl.associate(marker2, torusAffectedNode);
 
 		markerProcessor.registerEventListener(rtl);
 
