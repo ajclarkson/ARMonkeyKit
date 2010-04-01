@@ -24,6 +24,10 @@
  * THE SOFTWARE.
  * 
  */
+
+/**
+ * Source modified by Adam Clarkson, to resolve frustum issues. (see comment below)
+ */
 package jp.nyatla.nyartoolkit.qt.sample;
 
 import jp.nyatla.nyartoolkit.core.param.NyARParam;
@@ -33,7 +37,7 @@ import jp.nyatla.nyartoolkit.jogl.utils.NyARGLUtil;
  * NyARParam for jMonkeyEngine
  */
 public class JmeNyARParam extends NyARParam {
-	private float distMin = 10.0f;// 1cm～10.0m
+	private float distMin = 1.0f;// 1cm～10.0m
 
 	private float distMax = 10000.0f;
 
@@ -63,8 +67,8 @@ public class JmeNyARParam extends NyARParam {
 
 		float near = distMin;
 		float far = distMax;
-		float left = (float) (near * (ad[8] + 1) / ad[0]);
-		float right = (float) (near * (ad[8] - 1) / ad[0]);
+		float right = (float) (near * (ad[8] + 1) / ad[0]);//right and left have been reversed here to solve bounding issues.
+		float left = (float) (near * (ad[8] - 1) / ad[0]);
 		float top = (float) (near * (ad[9] + 1) / ad[5]);
 		float bottom = (float) (near * (ad[9] - 1) / ad[5]);
 
