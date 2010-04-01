@@ -1,19 +1,12 @@
 package armonkeykit.examples.patternmarkers;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.URL;
-
-
 import com.jme.bounding.BoundingSphere;
 import com.jme.scene.Node;
-import com.jme.util.export.binary.BinaryImporter;
-import com.jmex.model.converters.FormatConverter;
-import com.jmex.model.converters.ObjToJme;
 
 import armonkeykit.core.app.ARMonkeyKitApp;
 import armonkeykit.core.app.utils.NodeRotateTranslateListener;
+import armonkeykit.core.app.utils.ObjectLoader;
+import armonkeykit.core.app.utils.Rotate;
 import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
 import armonkeykit.core.markers.PatternMarker;
 
@@ -25,7 +18,7 @@ import armonkeykit.core.markers.PatternMarker;
  * 
  */
 public class ARMaggie extends ARMonkeyKitApp {
-	//TODO update documentation
+	// TODO update documentation
 
 	// marker processor to be used for this application.
 	private PatternMarkerProcessor markerProcessor;
@@ -34,7 +27,6 @@ public class ARMaggie extends ARMonkeyKitApp {
 
 	public ARMaggie() {
 		super();
-		//showCamera = false; // enable or disable camera feed
 		showSceneViewer = true; // enable or disable SceneMonitor
 	}
 
@@ -71,30 +63,20 @@ public class ARMaggie extends ARMonkeyKitApp {
 		 */
 		Node arAffectedNode = new Node("hiroAffectedARNode");
 		rootNode.attachChild(arAffectedNode);
-		URL model=this.getClass().getResource("maggie.obj");
 
-		// Create something to convert .obj format to .jme
-		FormatConverter converter=new ObjToJme();
-		// Point the converter to where it will find the .mtl file from
-		converter.setProperty("mtllib", model);
+		/**
+		 * Make use of the ObjectLoader to load Maggie from an obj file.
+		 * 
+		 */
+		Node maggie = ObjectLoader.loadObjectFromFile("maggie", this.getClass()
+				.getResource("maggie.obj"));
+		maggie.setLocalScale(.2f);
+		maggie.setModelBound(new BoundingSphere());
+		maggie.updateModelBound();
+		maggie.setLocalTranslation(0, 0, -30);
+		maggie.setLocalRotation(Rotate.PITCH270);
 
-		// This byte array will hold my .jme file
-		ByteArrayOutputStream BO=new ByteArrayOutputStream();
-		try {
-			// Use the format converter to convert .obj to .jme
-			converter.convert(model.openStream(), BO);
-			Node maggie=(Node)BinaryImporter.getInstance().load(new ByteArrayInputStream(BO.toByteArray()));
-			// shrink this baby down some
-			maggie.setLocalScale(.2f);			
-			maggie.setModelBound(new BoundingSphere());
-			maggie.updateModelBound();
-			maggie.setLocalTranslation(0, 0, -30);
-			// Put her on the scene graph
-
-			arAffectedNode.attachChild(maggie);
-		} catch (IOException e) {   // Just in case anything happens
-			System.exit(1);
-		}
+		arAffectedNode.attachChild(maggie);
 
 		/**
 		 * Use the associate method of the event listener to create a
