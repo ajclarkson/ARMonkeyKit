@@ -30,7 +30,7 @@ public class ARTeapotTorus extends ARMonkeyKitApp {
 
 	public ARTeapotTorus() {
 		super();
-		//showCamera = false; // enable or disable camera feed
+		showCamera = false; // enable or disable camera feed
 	    showSceneViewer = true; // enable or disable SceneMonitor
 	}
 
