@@ -106,6 +106,12 @@ public class ARVideoPlayer extends ARMonkeyKitApp{
 		app.start();
 	}
 
+	@Override
+	protected void configOptions() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 
 }

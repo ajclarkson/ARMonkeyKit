@@ -50,12 +50,12 @@ import com.jme.input.MouseInput;
 import com.jme.light.DirectionalLight;
 import com.jme.light.PointLight;
 import com.jme.math.FastMath;
-import com.jme.math.Matrix3f;
 import com.jme.math.Quaternion;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
 import com.jme.renderer.Renderer;
 import com.jme.scene.Node;
+import com.jme.scene.Spatial;
 import com.jme.scene.Spatial.CullHint;
 import com.jme.scene.shape.Teapot;
 import com.jme.util.geom.Debugger;
@@ -93,13 +93,15 @@ public abstract class ARMonkeyKitApp extends BaseSimpleGame {
 	protected boolean showCamera = true;
 
 	/**
+	 * Tells the application to render the camera feed as a small Heads Up Display, as a visual reference. Defaults to false.
+	 */
+	protected boolean showCameraFeedAsHUD = false;
+	/**
 	 * Sets the status of SceneMonitor (a useful tool for debugging scene graph
 	 * problems visually). Defaults to false as it is primarily a debugging
 	 * tool.
 	 */
-	protected boolean showSceneViewer = false; // can be overridden in
-												// individual apps to show the
-												// scene monitor for debugging.
+	protected boolean showSceneViewer = false; 
 
 	/**
 	 * NyARParameters for jMonkeyEngine from the NyARToolkit QuickTime Samples.
@@ -220,13 +222,23 @@ public abstract class ARMonkeyKitApp extends BaseSimpleGame {
 		cameraBG.updateGeometry(CAMERA_WIDTH * 4, CAMERA_HEIGHT * 4);
 		cameraBG.setCastsShadows(false);
 		cameraBG.setCullHint(CullHint.Never);
-		Matrix3f m = new Matrix3f();
-		m.fromAngleAxis((float) Math.toRadians(180), new Vector3f(0, 0, 1));
-		cameraBG.setLocalRotation(m);
 		cameraBG.setLocalTranslation(new Vector3f(0, 0, (float) -m2.m00 * 4));
 
 		if (showCamera == true) {
 			rootNode.attachChild(cameraBG);
+		}
+		
+		if (showCameraFeedAsHUD){
+			System.out.println("creatingHUD");
+			cameraBG.updateGeometry(CAMERA_WIDTH / 4, CAMERA_HEIGHT / 4);
+			cameraBG.setRenderQueueMode(Renderer.QUEUE_ORTHO);
+			cameraBG.setLocalTranslation(new Vector3f(cameraBG.getWidth(), cameraBG.getHeight(), 0));
+			cameraBG.setLightCombineMode(Spatial.LightCombineMode.Off);
+			cameraBG.updateRenderState();
+			
+			
+			//TODO convert HUD to a moveable window?
+			
 		}
 
 		input = new InputHandler();
@@ -248,8 +260,8 @@ public abstract class ARMonkeyKitApp extends BaseSimpleGame {
 	protected void simpleUpdate() {
 		if (showCamera == true) {
 			cameraBG.update();
-			markerProcessor.update(cameraBG.getRaster());
 		}
+		markerProcessor.update(cameraBG.getRaster());
 		callUpdates();
 	}
 
@@ -281,6 +293,7 @@ public abstract class ARMonkeyKitApp extends BaseSimpleGame {
 	 */
 	protected void simpleInitGame() {
 		rootNode.setCullHint(CullHint.Never);
+		configOptions();
 		lightSetup();
 
 		cameraSetup();
@@ -373,5 +386,12 @@ public abstract class ARMonkeyKitApp extends BaseSimpleGame {
 	 * marker processors and event listeners which are needed by the system.
 	 */
 	protected abstract void simpleInitARSystem();
+	
+	/**
+	 * Abstract method which, when implemented, allows the developer to control configuration options such as whether the camera
+	 * feed should be shown, whether the HUD is visible etc. This is required because these methods must be called before all other 
+	 * setup takes place.
+	 */
+	protected abstract void configOptions();
 
 }

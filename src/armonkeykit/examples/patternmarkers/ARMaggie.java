@@ -58,9 +58,9 @@ public class ARMaggie extends ARMonkeyKitApp {
 	private NodeRotateTranslateListener rtl;
 
 	public ARMaggie() {
-		super();
-		showSceneViewer = true; // enable or disable SceneMonitor
-		//showCamera = false;
+	
+		
+		
 	}
 
 	/**
@@ -75,6 +75,13 @@ public class ARMaggie extends ARMonkeyKitApp {
 		markerProcessor = initPatternProcessor();
 		rtl = new NodeRotateTranslateListener();
 		markerProcessor.registerEventListener(rtl);
+		
+		
+	}
+	@Override
+	protected void configOptions() {
+		showSceneViewer = true; // enable or disable SceneMonitor
+		showCameraFeedAsHUD = true;
 	}
 
 	@Override

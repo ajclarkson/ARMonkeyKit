@@ -143,4 +143,10 @@ public class ARTeapotTorus extends ARMonkeyKitApp {
 		app.start();
 	}
 
+	@Override
+	protected void configOptions() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

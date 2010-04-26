@@ -110,4 +110,10 @@ public class ARIDTeapot extends ARMonkeyKitApp {
 
 	}
 
+	@Override
+	protected void configOptions() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
