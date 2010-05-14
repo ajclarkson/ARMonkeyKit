@@ -29,7 +29,7 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package armonkeykit.core.app.utils;
+package armonkeykit.core.app.utils.eventlisteners;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ import com.jme.renderer.ColorRGBA;
 import com.jme.scene.Line;
 import com.jme.scene.Node;
 
-import armonkeykit.core.events.IEventListener;
+import armonkeykit.core.app.utils.MarkerDistanceRelationship;
 import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markers.Marker;
 

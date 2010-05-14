@@ -34,7 +34,7 @@ package armonkeykit.core.markerprocessor.id;
 import java.util.ArrayList;
 import java.util.List;
 
-import armonkeykit.core.events.IEventListener;
+import armonkeykit.core.app.utils.eventlisteners.IEventListener;
 import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markerprocessor.IMarkerProcessor;
 import armonkeykit.core.markers.Marker;

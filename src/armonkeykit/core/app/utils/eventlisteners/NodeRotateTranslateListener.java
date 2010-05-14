@@ -29,7 +29,7 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package armonkeykit.core.app.utils;
+package armonkeykit.core.app.utils.eventlisteners;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +40,7 @@ import com.jme.math.Matrix3f;
 import com.jme.math.Matrix4f;
 import com.jme.scene.Node;
 
-import armonkeykit.core.events.IEventListener;
+import armonkeykit.core.app.utils.MatrixSmoother;
 import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markers.Marker;
 

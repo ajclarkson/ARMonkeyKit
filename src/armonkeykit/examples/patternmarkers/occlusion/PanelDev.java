@@ -29,81 +29,54 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package armonkeykit.examples.patternmarkers;
 
-import jp.nyatla.nyartoolkit.NyARException;
+package armonkeykit.examples.patternmarkers.occlusion;
 
-import org.llama.jmf.ByteBufferRenderer;
-
-import com.jme.math.FastMath;
-import com.jme.math.Quaternion;
-import com.jme.math.Vector3f;
 import com.jme.scene.Node;
 
 import armonkeykit.core.app.ARMonkeyKitApp;
-import armonkeykit.core.app.utils.NodeRotateTranslateListener;
+import armonkeykit.core.app.utils.eventlisteners.OcclusionControlListener;
 import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
 import armonkeykit.core.markers.PatternMarker;
 
-/**
- * ARVideoPlayer. An example program which loads in a video file, then plays it back in a player attached to a pattern marker.
- * This can then be treated like any other model.
- * 
- * @author Andrew Hatch, Adam Clarkson
- *
- */
-public class ARVideoPlayer extends ARMonkeyKitApp{
+public class PanelDev extends ARMonkeyKitApp {
 
-	private VideoQuad videoQuad;
-	
-	private PatternMarkerProcessor markerProcessor;
-
-	public ARVideoPlayer() {
-		super();
-	}
-	
-	@Override
-	protected void simpleInitARSystem() {
-		markerProcessor = initPatternProcessor();
-		
-	}
-	
+	PatternMarkerProcessor markerProcessor;
+	OcclusionControlListener ocl;
 	@Override
 	protected void addMarkers() {
-		Node videoAffectedNode = new Node("Video Affected Node");
-		ByteBufferRenderer.printframes = false;
-		ByteBufferRenderer.useFOBSOptimization = true;
-		ByteBufferRenderer.useFOBSPatch = true;
-		videoQuad = new VideoQuad("VideoQuad");
-		videoQuad.updateGeometry(180f, 90f);
-		videoQuad.setVideoURL(ARVideoPlayer.class.getResource("net_content.mp4"));
-		// for some reason, need to flip the video
-		Quaternion qvq = new Quaternion();
-		qvq = qvq.fromAngleAxis(FastMath.PI, new Vector3f(1f, 0f, 0f));
-		videoQuad.setLocalRotation(qvq);
-		videoAffectedNode.attachChild(videoQuad);
-		rootNode.attachChild(videoAffectedNode);
-		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16, "ardata/patt.kanji", 80);
-		markerProcessor.registerMarker(kanji);
-		markerProcessor.finaliseMarkers();
+		PatternMarker one = markerProcessor.createMarkerObject("one", 16, "ardata/patterns/numerals/patt.one", 80);
+		markerProcessor.registerMarker(one);
 		
-		NodeRotateTranslateListener rtl = new NodeRotateTranslateListener();
-		rtl.associate(kanji, videoAffectedNode);
-		markerProcessor.registerEventListener(rtl);
+		PatternMarker two = markerProcessor.createMarkerObject("two", 16, "ardata/patterns/numerals/patt.two", 80);
+		markerProcessor.registerMarker(two);
+		
+		PatternMarker three = markerProcessor.createMarkerObject("three", 16, "ardata/patterns/numerals/patt.three", 80);
+		markerProcessor.registerMarker(three);
+		
+		PatternMarker four = markerProcessor.createMarkerObject("four", 16, "ardata/patterns/numerals/patt.four", 80);
+		markerProcessor.registerMarker(four);
+		
+		PatternMarker five = markerProcessor.createMarkerObject("five", 16, "ardata/patterns/numerals/patt.five", 80);
+		markerProcessor.registerMarker(five);
+		
+		PatternMarker six = markerProcessor.createMarkerObject("six", 16, "ardata/patterns/numerals/patt.six", 80);
+		markerProcessor.registerMarker(six);
+		
+		ocl.associate(one,new Node("one"));
+		ocl.associate(two,new Node("two"));
+		ocl.associate(three,new Node("three"));
+		ocl.associate(four,new Node("four"));
+		ocl.associate(five,new Node("five"));
+		ocl.associate(six,new Node("six"));
+	
+		markerProcessor.finaliseMarkers();
 	}
 
 	@Override
 	protected void callUpdates() {
-		if(videoQuad != null) {
-			videoQuad.update();
-		}		
-	}
-	
-	public static void main(String[] args) throws NyARException
-	{
-		ARVideoPlayer app = new ARVideoPlayer();
-		app.setConfigShowMode(ConfigShowMode.AlwaysShow);
-		app.start();
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -112,6 +85,17 @@ public class ARVideoPlayer extends ARMonkeyKitApp{
 		
 	}
 
+	@Override
+	protected void simpleInitARSystem() {
+		markerProcessor = initPatternProcessor();
+		ocl = new OcclusionControlListener();
+		markerProcessor.registerEventListener(ocl);
+	}
 	
+	public static void main(String[] args){
+		PanelDev app = new PanelDev();
+		app.setConfigShowMode(ConfigShowMode.AlwaysShow);
+		app.start();
+	}
 
 }

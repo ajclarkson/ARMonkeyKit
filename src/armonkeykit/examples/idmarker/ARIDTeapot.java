@@ -39,7 +39,7 @@ import com.jme.scene.shape.Teapot;
 import com.jme.scene.shape.Torus;
 
 import armonkeykit.core.app.ARMonkeyKitApp;
-import armonkeykit.core.app.utils.NodeRotateTranslateListener;
+import armonkeykit.core.app.utils.eventlisteners.NodeRotateTranslateListener;
 import armonkeykit.core.markers.NyIDMarker;
 
 /**

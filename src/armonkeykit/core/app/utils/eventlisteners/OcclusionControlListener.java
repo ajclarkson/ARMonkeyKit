@@ -29,67 +29,54 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package armonkeykit.examples.patternmarkers;
 
-import java.net.URL;
+package armonkeykit.core.app.utils.eventlisteners;
 
-import org.llama.jmf.JMFVideoImage;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.jme.image.Texture2D;
-import com.jme.image.Texture.ApplyMode;
-import com.jme.image.Texture.MagnificationFilter;
-import com.jme.image.Texture.MinificationFilter;
-import com.jme.scene.shape.Quad;
-import com.jme.scene.state.TextureState;
-import com.jme.system.DisplaySystem;
+import com.jme.scene.Node;
 
-public class VideoQuad extends Quad {
-	private static final long serialVersionUID = 2066861456419104457L;
+import armonkeykit.core.events.MarkerChangedEvent;
+import armonkeykit.core.markers.Marker;
+
+//needs improved documentation, but only experimental, basically returns the name of the button which has been "pressed" (occluded)
+public class OcclusionControlListener implements IEventListener {
+
 	
-	private JMFVideoImage image;
-	private Texture2D tex;
-
-	public VideoQuad(String name) {
-		super(name);
+	Map<String, Node> markerToNode = new HashMap<String, Node>();
+	@Override
+	public void associate(Marker m, Node n) {
+		markerToNode.put(m.getUniqueID(), n);
+		
 	}
 	
-	public void update() {
-		if(image != null) {
-			if (!image.update(tex, false)) {
-				image.waitSome(3);
-			}
-		}
-	}
-	
-	private void loadVideo(URL videoResource) {		
-		try {
-			image = new JMFVideoImage(videoResource, true, JMFVideoImage.SCALE_MAXIMIZE);
-			tex = new Texture2D();			
-			tex.setMinificationFilter(MinificationFilter.Trilinear);
-			tex.setMagnificationFilter(MagnificationFilter.Bilinear);
-			tex.setImage(image);			
-			tex.setApply(ApplyMode.Replace);
-			TextureState ts = DisplaySystem.getDisplaySystem().getRenderer().createTextureState();
-			ts.setEnabled(true);
-			ts.setTexture(tex);
-			setRenderState(ts);
-			updateRenderState();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		start();
-		// could, at this point, resize to fit height to current width?
-	}
-	
-	public void setVideoURL(URL url) {
-		loadVideo(url);
+
+	@Override
+	public void markerChanged(MarkerChangedEvent event) {
 		
 	}
 
-	public void start() {
-		if(image != null) {
-			image.startMovie();
+	@Override
+	public void markerRemoved(Marker m) {
+		Node content = markerToNode.get(m.getUniqueID());
+		if (content != null)
+		content.setLocalScale(5.0f);
+		if (m.getUniqueID().equals("three")){
+			System.err.println("THREE PRESSED");
+		}else{
+		System.out.println("Button Press: " + m.getUniqueID());
 		}
+		
+	}
+
+
+	@Override
+	public void markerAdded(Marker m) {
+		Node content = markerToNode.get(m.getUniqueID());
+		if (content != null)
+		content.setLocalScale(1.0f);
+		
 	}
 
 }

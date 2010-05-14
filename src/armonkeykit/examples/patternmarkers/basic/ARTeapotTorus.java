@@ -29,16 +29,18 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package armonkeykit.examples.patternmarkers;
+package armonkeykit.examples.patternmarkers.basic;
 
 import com.jme.bounding.BoundingSphere;
-import com.jme.scene.CameraNode;
+import com.jme.math.FastMath;
+import com.jme.math.Quaternion;
+import com.jme.math.Vector3f;
 import com.jme.scene.Node;
+import com.jme.scene.shape.Teapot;
+import com.jme.scene.shape.Torus;
 
 import armonkeykit.core.app.ARMonkeyKitApp;
-import armonkeykit.core.app.utils.NodeRotateTranslateListener;
-import armonkeykit.core.app.utils.ObjectLoader;
-import armonkeykit.core.app.utils.Rotate;
+import armonkeykit.core.app.utils.eventlisteners.NodeRotateTranslateListener;
 import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
 import armonkeykit.core.markers.PatternMarker;
 
@@ -49,20 +51,18 @@ import armonkeykit.core.markers.PatternMarker;
  * @author Adam Clarkson
  * 
  */
-public class ARMaggie extends ARMonkeyKitApp {
-	// TODO update documentation
-
+public class ARTeapotTorus extends ARMonkeyKitApp {
+//TODO update documentation
+	
 	// marker processor to be used for this application.
 	private PatternMarkerProcessor markerProcessor;
 	// event listener to use with the system
 	private NodeRotateTranslateListener rtl;
-	
-	PatternMarker kanji;
 
-	public ARMaggie() {
-	
-		
-		
+	public ARTeapotTorus() {
+		super();
+		showCamera = true; // enable or disable camera feed
+	    showSceneViewer = true; // enable or disable SceneMonitor
 	}
 
 	/**
@@ -75,16 +75,8 @@ public class ARMaggie extends ARMonkeyKitApp {
 	@Override
 	protected void simpleInitARSystem() {
 		markerProcessor = initPatternProcessor();
-		rtl = new NodeRotateTranslateListener();
+		rtl = new NodeRotateTranslateListener(true);
 		markerProcessor.registerEventListener(rtl);
-		
-		
-		
-	}
-	@Override
-	protected void configOptions() {
-		showSceneViewer = true; // enable or disable SceneMonitor
-		showCameraFeedAsHUD = true;
 	}
 
 	@Override
@@ -92,43 +84,47 @@ public class ARMaggie extends ARMonkeyKitApp {
 		/**
 		 * This creates the marker objects and registers them to the system
 		 */
+
 		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16,
 				"ardata/patt.kanji", 80);
 		markerProcessor.registerMarker(kanji);
-
+		
 		PatternMarker hiro = markerProcessor.createMarkerObject("hiro", 16,
 				"ardata/patt.hiro", 80);
 		markerProcessor.registerMarker(hiro);
-
+		
 		/**
 		 * Create some content to attach to the markers
 		 * 
 		 */
-		Node arAffectedNode = new Node("hiroAffectedARNode");
-		rootNode.attachChild(arAffectedNode);
+		Node teapotAffectedNode = new Node("Affected Teapot Node");
+		Teapot tp = new Teapot("ShinyTeapot");
+		tp.setModelBound(new BoundingSphere());
+		tp.updateModelBound();
+		tp.setLocalScale(10f);
+		// rotate our teapot so its base sits on the marker
+		Quaternion q = new Quaternion();
+		q = q.fromAngleAxis(-FastMath.PI / 2, new Vector3f(1f, 0f, 0f));
+		tp.setLocalRotation(q);
 
-		/**
-		 * Make use of the ObjectLoader to load Maggie from an obj file.
-		 * 
-		 */
-		Node maggie = ObjectLoader.loadObjectFromFile("maggie", this.getClass()
-				.getResource("maggie.obj"));
-		maggie.setLocalScale(.2f);
-		maggie.setModelBound(new BoundingSphere());
-		maggie.updateModelBound();
-		maggie.setLocalTranslation(0, 0, -30);
-		maggie.setLocalRotation(Rotate.PITCH270);
+		teapotAffectedNode.attachChild(tp);
+		rootNode.attachChild(teapotAffectedNode);
 
-		arAffectedNode.attachChild(maggie);
+		Node torusAffectedNode = new Node("Affected Torus Node");
+		Torus torus = new Torus("Torus", 12, 40, 1.5f, 3f);
+		torus.setLocalScale(10f);
+		torus.setModelBound(new BoundingSphere());
+		torus.updateModelBound();
+		torusAffectedNode.attachChild(torus);
+		rootNode.attachChild(torusAffectedNode);
 
 		/**
 		 * Use the associate method of the event listener to create a
 		 * relationship between a marker object and the ARContentNode we created
 		 * for that marker.
 		 */
-		rtl.associate(hiro, arAffectedNode);
-		CameraNode camNode = new CameraNode("cam", cam);
-		rtl.associate(kanji, camNode);
+		rtl.associate(kanji, teapotAffectedNode);
+		rtl.associate(hiro, torusAffectedNode);
 
 		/**
 		 * This method must be called after adding markers, to ensure that the
@@ -140,13 +136,17 @@ public class ARMaggie extends ARMonkeyKitApp {
 
 	@Override
 	protected void callUpdates() {
-		
 	}
 
 	public static void main(String[] args) {
-		ARMaggie app = new ARMaggie();
+		ARTeapotTorus app = new ARTeapotTorus();
 		app.setConfigShowMode(ConfigShowMode.AlwaysShow);
 		app.start();
+	}
+
+	@Override
+	protected void configOptions() {
+		
 	}
 
 }

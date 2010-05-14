@@ -29,15 +29,62 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package armonkeykit.core.events;
+package armonkeykit.examples.patternmarkers;
 
+import com.jme.scene.CameraNode;
 import com.jme.scene.Node;
 
-import armonkeykit.core.markers.Marker;
+import armonkeykit.core.app.ARMonkeyKitApp;
+import armonkeykit.core.app.utils.eventlisteners.NodeRotateTranslateListener;
+import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
+import armonkeykit.core.markers.PatternMarker;
 
-public interface IEventListener {
-	public void associate(Marker m, Node n);
-	public void markerAdded(Marker m);
-	public void markerChanged(MarkerChangedEvent event);
-	public void markerRemoved(Marker m);
+public class CamControl extends ARMonkeyKitApp {
+
+	PatternMarkerProcessor markerProcessor;
+	NodeRotateTranslateListener rtl;
+	@Override
+	protected void addMarkers() {
+		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16, "ardata/patt.kanji", 80);
+		markerProcessor.registerMarker(kanji);
+		
+		PatternMarker hiro = markerProcessor.createMarkerObject("hiro", 16, "ardata/patt.hiro", 80);
+		markerProcessor.registerMarker(hiro);
+		
+		Node teapot = createTestTeapot();
+		rtl.associate(hiro,teapot);
+		rootNode.attachChild(teapot);
+		
+		CameraNode cameraNode = new CameraNode("cam", cam);
+		rtl.associate(kanji, cameraNode);
+		rootNode.attachChild(cameraNode);
+		
+//		cam.setDirection
+		
+		markerProcessor.finaliseMarkers();
+	}
+
+	@Override
+	protected void callUpdates() {
+		
+	}
+
+	@Override
+	protected void simpleInitARSystem() {
+		markerProcessor = initPatternProcessor();
+		rtl = new NodeRotateTranslateListener();
+		markerProcessor.registerEventListener(rtl);
+		
+	}
+
+	public static void main(String[] args){
+		CamControl app = new CamControl();
+		app.start();
+		app.setConfigShowMode(ConfigShowMode.AlwaysShow);
+	}
+
+	@Override
+	protected void configOptions() {
+		showCameraFeedAsHUD = true;
+	}
 }

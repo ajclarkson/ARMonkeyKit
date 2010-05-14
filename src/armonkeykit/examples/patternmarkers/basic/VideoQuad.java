@@ -29,46 +29,67 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package armonkeykit.core.markerprocessor;
+package armonkeykit.examples.patternmarkers.basic;
 
-import jp.nyatla.nyartoolkit.core.raster.rgb.INyARRgbRaster;
-import armonkeykit.core.app.utils.eventlisteners.IEventListener;
-import armonkeykit.core.markers.Marker;
+import java.net.URL;
 
-/**
- * Interface determining what methods must be implemented in the underlying MarkerProcessors.
- * @author Adam Clarkson
- *
- */
-public interface IMarkerProcessor {
+import org.llama.jmf.JMFVideoImage;
+
+import com.jme.image.Texture2D;
+import com.jme.image.Texture.ApplyMode;
+import com.jme.image.Texture.MagnificationFilter;
+import com.jme.image.Texture.MinificationFilter;
+import com.jme.scene.shape.Quad;
+import com.jme.scene.state.TextureState;
+import com.jme.system.DisplaySystem;
+
+public class VideoQuad extends Quad {
+	private static final long serialVersionUID = 2066861456419104457L;
 	
-	/**
-	 * Registering an Event Listener for the system. 
-	 */
-	public void registerEventListener(IEventListener listener);
+	private JMFVideoImage image;
+	private Texture2D tex;
+
+	public VideoQuad(String name) {
+		super(name);
+	}
 	
-	/**
-	 * Register a marker for use with the system. The marker will not be detected unless
-	 * it is within this list. Marker is not guaranteed to be detected until
-	 * finaliseMarkers is called.
-	 * @param m Marker to add to the list
-	 */
-	public void registerMarker(Marker m);
+	public void update() {
+		if(image != null) {
+			if (!image.update(tex, false)) {
+				image.waitSome(3);
+			}
+		}
+	}
 	
-	/**
-	 * Any changes to registered markers need to be committed by calling this method.
-	 * Any changes to registered markers are not guaranteed to be effective until
-	 * this method is called.
-	 */
-	public void finaliseMarkers();
+	private void loadVideo(URL videoResource) {		
+		try {
+			image = new JMFVideoImage(videoResource, true, JMFVideoImage.SCALE_MAXIMIZE);
+			tex = new Texture2D();			
+			tex.setMinificationFilter(MinificationFilter.Trilinear);
+			tex.setMagnificationFilter(MagnificationFilter.Bilinear);
+			tex.setImage(image);			
+			tex.setApply(ApplyMode.Replace);
+			TextureState ts = DisplaySystem.getDisplaySystem().getRenderer().createTextureState();
+			ts.setEnabled(true);
+			ts.setTexture(tex);
+			setRenderState(ts);
+			updateRenderState();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		start();
+		// could, at this point, resize to fit height to current width?
+	}
 	
-	/**
-	 * Remove a marker from the system. The changes are not guaranteed to be made
-	 * until finaliseMarkers is called.
-	 * @param m Marker to remove
-	 */
-	public void deregisterMarker(Marker m);
-	
-	public void update(INyARRgbRaster raster);
+	public void setVideoURL(URL url) {
+		loadVideo(url);
+		
+	}
+
+	public void start() {
+		if(image != null) {
+			image.startMovie();
+		}
+	}
 
 }

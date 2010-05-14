@@ -34,8 +34,8 @@ package armonkeykit.examples.patternmarkers;
 import com.jme.scene.Node;
 
 import armonkeykit.core.app.ARMonkeyKitApp;
-import armonkeykit.core.app.utils.MarkerRelationshipListener;
-import armonkeykit.core.app.utils.NodeRotateTranslateListener;
+import armonkeykit.core.app.utils.eventlisteners.MarkerRelationshipListener;
+import armonkeykit.core.app.utils.eventlisteners.NodeRotateTranslateListener;
 import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
 import armonkeykit.core.markers.PatternMarker;
 

@@ -29,55 +29,16 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-
-package armonkeykit.core.app.utils;
-
-import java.util.HashMap;
-import java.util.Map;
+package armonkeykit.core.app.utils.eventlisteners;
 
 import com.jme.scene.Node;
 
-import armonkeykit.core.events.IEventListener;
 import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markers.Marker;
 
-//needs improved documentation, but only experimental, basically returns the name of the button which has been "pressed" (occluded)
-public class OcclusionControlListener implements IEventListener {
-
-	
-	Map<String, Node> markerToNode = new HashMap<String, Node>();
-	@Override
-	public void associate(Marker m, Node n) {
-		markerToNode.put(m.getUniqueID(), n);
-		
-	}
-	
-
-	@Override
-	public void markerChanged(MarkerChangedEvent event) {
-		
-	}
-
-	@Override
-	public void markerRemoved(Marker m) {
-		Node content = markerToNode.get(m.getUniqueID());
-		if (content != null)
-		content.setLocalScale(5.0f);
-		if (m.getUniqueID().equals("three")){
-			System.err.println("THREE PRESSED");
-		}else{
-		System.out.println("Button Press: " + m.getUniqueID());
-		}
-		
-	}
-
-
-	@Override
-	public void markerAdded(Marker m) {
-		Node content = markerToNode.get(m.getUniqueID());
-		if (content != null)
-		content.setLocalScale(1.0f);
-		
-	}
-
+public interface IEventListener {
+	public void associate(Marker m, Node n);
+	public void markerAdded(Marker m);
+	public void markerChanged(MarkerChangedEvent event);
+	public void markerRemoved(Marker m);
 }

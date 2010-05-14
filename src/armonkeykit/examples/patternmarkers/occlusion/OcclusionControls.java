@@ -30,13 +30,13 @@
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-package armonkeykit.examples.patternmarkers;
+package armonkeykit.examples.patternmarkers.occlusion;
 
 import com.jme.scene.Node;
 
 import armonkeykit.core.app.ARMonkeyKitApp;
-import armonkeykit.core.app.utils.NodeRotateTranslateListener;
-import armonkeykit.core.app.utils.OcclusionControlListener;
+import armonkeykit.core.app.utils.eventlisteners.NodeRotateTranslateListener;
+import armonkeykit.core.app.utils.eventlisteners.OcclusionControlListener;
 import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
 import armonkeykit.core.markers.PatternMarker;
 
