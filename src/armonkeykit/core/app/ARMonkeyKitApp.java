@@ -46,10 +46,12 @@ import com.jme.app.AbstractGame;
 import com.jme.app.BaseSimpleGame;
 import com.jme.image.Texture;
 import com.jme.input.InputHandler;
+
 import com.jme.input.MouseInput;
 import com.jme.light.DirectionalLight;
 import com.jme.light.PointLight;
 import com.jme.math.FastMath;
+import com.jme.math.Matrix3f;
 import com.jme.math.Quaternion;
 import com.jme.math.Vector3f;
 import com.jme.renderer.ColorRGBA;
@@ -175,6 +177,7 @@ public abstract class ARMonkeyKitApp extends BaseSimpleGame {
 	 * @param markerWidth
 	 *            the width of the ID Marker which will be detected.
 	 * @return markerProcessor instance of IDMarkerProcessor
+	 * @see IDMarkerProcessor
 	 */
 	protected IDMarkerProcessor initIDProcessor(int markerWidth) {
 		IDMarkerProcessor processor = new IDMarkerProcessor(
@@ -222,6 +225,9 @@ public abstract class ARMonkeyKitApp extends BaseSimpleGame {
 		cameraBG.updateGeometry(CAMERA_WIDTH * 4, CAMERA_HEIGHT * 4);
 		cameraBG.setCastsShadows(false);
 		cameraBG.setCullHint(CullHint.Never);
+		Matrix3f m = new Matrix3f();
+        m.fromAngleAxis((float) Math.toRadians(180), new Vector3f(0, 0, 1));
+        cameraBG.setLocalRotation(m);
 		cameraBG.setLocalTranslation(new Vector3f(0, 0, (float) -m2.m00 * 4));
 
 		if (showCamera == true) {
@@ -229,7 +235,6 @@ public abstract class ARMonkeyKitApp extends BaseSimpleGame {
 		}
 		
 		if (showCameraFeedAsHUD){
-			System.out.println("creatingHUD");
 			cameraBG.updateGeometry(CAMERA_WIDTH / 4, CAMERA_HEIGHT / 4);
 			cameraBG.setRenderQueueMode(Renderer.QUEUE_ORTHO);
 			cameraBG.setLocalTranslation(new Vector3f(cameraBG.getWidth(), cameraBG.getHeight(), 0));

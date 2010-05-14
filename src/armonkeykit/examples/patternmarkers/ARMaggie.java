@@ -56,6 +56,8 @@ public class ARMaggie extends ARMonkeyKitApp {
 	private PatternMarkerProcessor markerProcessor;
 	// event listener to use with the system
 	private NodeRotateTranslateListener rtl;
+	
+	PatternMarker kanji;
 
 	public ARMaggie() {
 	
@@ -75,6 +77,7 @@ public class ARMaggie extends ARMonkeyKitApp {
 		markerProcessor = initPatternProcessor();
 		rtl = new NodeRotateTranslateListener();
 		markerProcessor.registerEventListener(rtl);
+		
 		
 		
 	}
@@ -137,6 +140,7 @@ public class ARMaggie extends ARMonkeyKitApp {
 
 	@Override
 	protected void callUpdates() {
+		
 	}
 
 	public static void main(String[] args) {

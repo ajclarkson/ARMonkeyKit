@@ -29,15 +29,71 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package armonkeykit.core.events;
+
+package armonkeykit.examples.patternmarkers;
 
 import com.jme.scene.Node;
 
-import armonkeykit.core.markers.Marker;
+import armonkeykit.core.app.ARMonkeyKitApp;
+import armonkeykit.core.app.utils.NodeRotateTranslateListener;
+import armonkeykit.core.app.utils.OcclusionControlListener;
+import armonkeykit.core.markerprocessor.pattern.PatternMarkerProcessor;
+import armonkeykit.core.markers.PatternMarker;
 
-public interface IEventListener {
-	public void associate(Marker m, Node n);
-	public void markerAdded(Marker m);
-	public void markerChanged(MarkerChangedEvent event);
-	public void markerRemoved(Marker m);
+public class OcclusionControls extends ARMonkeyKitApp {
+
+	PatternMarkerProcessor markerProcessor;
+	NodeRotateTranslateListener rtl;
+	OcclusionControlListener ocl;
+	@Override
+	protected void addMarkers() {
+	
+		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16, "ardata/kanji", 80);
+		markerProcessor.registerMarker(kanji);
+		
+		Node teapotAffectedNode = createTestTeapot();
+		teapotAffectedNode.setLocalScale(1.0f);
+		rootNode.attachChild(teapotAffectedNode);
+		
+		rtl.associate(kanji, teapotAffectedNode);
+		
+		
+		PatternMarker monkey = markerProcessor.createMarkerObject("monkey", 16, "ardata/patterns/patt.monkey", 80);
+		markerProcessor.registerMarker(monkey);
+		
+		ocl.associate(monkey,teapotAffectedNode);
+		
+		markerProcessor.finaliseMarkers();
+		
+		
+	}
+
+	@Override
+	protected void callUpdates() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void configOptions() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void simpleInitARSystem() {
+		markerProcessor = initPatternProcessor();
+		rtl = new NodeRotateTranslateListener();
+		markerProcessor.registerEventListener(rtl);
+		
+		ocl = new OcclusionControlListener();
+		markerProcessor.registerEventListener(ocl);
+	}
+	
+	public static void main(String[] args){
+		OcclusionControls app = new OcclusionControls();
+		app.setConfigShowMode(ConfigShowMode.AlwaysShow);
+		app.start();
+	}
+
 }

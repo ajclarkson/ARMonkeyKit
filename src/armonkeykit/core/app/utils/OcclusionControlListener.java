@@ -41,24 +41,42 @@ import armonkeykit.core.events.IEventListener;
 import armonkeykit.core.events.MarkerChangedEvent;
 import armonkeykit.core.markers.Marker;
 
-public class MarkerConfidenceTracker implements IEventListener {
-	//TODO: consider a better implementation strategy for this
-	Map<String, Node> markerToNode = new HashMap<String, Node>();
+//needs improved documentation, but only experimental, basically returns the name of the button which has been "pressed" (occluded)
+public class OcclusionControlListener implements IEventListener {
+
 	
+	Map<String, Node> markerToNode = new HashMap<String, Node>();
 	@Override
 	public void associate(Marker m, Node n) {
 		markerToNode.put(m.getUniqueID(), n);
+		
 	}
+	
 
 	@Override
 	public void markerChanged(MarkerChangedEvent event) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void markerRemoved(Marker m) {
-		// TODO Auto-generated method stub
+		Node content = markerToNode.get(m.getUniqueID());
+		if (content != null)
+		content.setLocalScale(5.0f);
+		if (m.getUniqueID().equals("three")){
+			System.err.println("THREE PRESSED");
+		}else{
+		System.out.println("Button Press: " + m.getUniqueID());
+		}
+		
+	}
+
+
+	@Override
+	public void markerAdded(Marker m) {
+		Node content = markerToNode.get(m.getUniqueID());
+		if (content != null)
+		content.setLocalScale(1.0f);
 		
 	}
 

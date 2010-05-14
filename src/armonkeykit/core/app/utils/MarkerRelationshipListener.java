@@ -153,4 +153,10 @@ public class MarkerRelationshipListener implements IEventListener {
 
 	}
 
+	@Override
+	public void markerAdded(Marker m) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -29,15 +29,59 @@
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package armonkeykit.core.events;
+//
 
-import com.jme.scene.Node;
+/**
+ * Adapted from code by Andrew Davison - ad@fivedots.coe.psu.ac.th
+ */
 
-import armonkeykit.core.markers.Marker;
+package armonkeykit.core.app.utils;
 
-public interface IEventListener {
-	public void associate(Marker m, Node n);
-	public void markerAdded(Marker m);
-	public void markerChanged(MarkerChangedEvent event);
-	public void markerRemoved(Marker m);
+import java.util.ArrayList;
+import java.util.List;
+
+import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
+
+import com.jme.math.Matrix4f;
+
+public class MatrixSmoother {
+
+	// TODO maybe write an automatic function based on standard deviation of the
+	// averages
+	private int historySize = 3;
+	private List<Matrix4f> matrixHistory = new ArrayList<Matrix4f>();
+
+	public void add(NyARTransMatResult transMatResult) {
+
+		Matrix4f matrix = new Matrix4f((float) -transMatResult.m00,
+				(float) -transMatResult.m01, (float) -transMatResult.m02,
+				(float) -transMatResult.m03, (float) -transMatResult.m10,
+				(float) -transMatResult.m11, (float) -transMatResult.m12,
+				(float) -transMatResult.m13, (float) transMatResult.m20,
+				(float) transMatResult.m21, (float) transMatResult.m22,
+				(float) -transMatResult.m23, 0, 0, 0, 1);
+		
+		if((matrixHistory.size() == historySize)&& matrixHistory.size() > 0){
+			matrixHistory.remove(0);
+			
+		}
+		
+		
+		matrixHistory.add(matrix);
+
+	}
+	
+	public Matrix4f getAverageMatrix(){
+		if (matrixHistory.size() == 0){
+			return null;
+		}
+		Matrix4f averageMatrix = new Matrix4f();
+		for (Matrix4f matrix : matrixHistory){
+			averageMatrix.addLocal(matrix);
+		}
+		
+		averageMatrix.mult((float) (1.0/matrixHistory.size()));
+		return averageMatrix;
+	}
+
 }

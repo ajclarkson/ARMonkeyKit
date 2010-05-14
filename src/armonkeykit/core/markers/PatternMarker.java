@@ -31,6 +31,7 @@
  ******************************************************************************/
 package armonkeykit.core.markers;
 
+import armonkeykit.core.app.utils.MatrixSmoother;
 import jp.nyatla.nyartoolkit.core.NyARCode;
 import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 
@@ -48,6 +49,10 @@ public class PatternMarker implements Marker {
 	private int codeArrayPosition;
 	private NyARTransMatResult transMatResult;
 	private double width;
+	private double confidence;
+	private MatrixSmoother matrixSmooth;
+	private int lossCounter;
+	private boolean markerInScene;
 
 	/**
 	 * Create a new PatternMarker Object. 
@@ -58,6 +63,9 @@ public class PatternMarker implements Marker {
 		this.uid = uid;
 		this.code = code;
 		this.width = markerWidth;
+		matrixSmooth = new MatrixSmoother();
+		this.lossCounter = 0;
+		this.markerInScene = false;
 	}
 	
 	public String getUniqueID() {
@@ -104,5 +112,45 @@ public class PatternMarker implements Marker {
 	public double getWidth(){
 		return this.width;
 	}
+	
+	public void setConfidence(double confidence){
+		this.confidence = confidence;
+		
+	}
+	
+	public double getConfidence() {
+		return this.confidence;
+	}
 
+	public MatrixSmoother getMatrixSmoother(){
+		return this.matrixSmooth;
+	}
+
+	@Override
+	public int getLossCounterValue() {
+		return this.lossCounter;
+	}
+
+	@Override
+	public void incrementLossCounter() {
+		this.lossCounter++;
+		
+	}
+
+	@Override
+	public void resetLossCounter() {
+		this.lossCounter = 0;
+		
+	}
+
+	@Override
+	public boolean getMarkerInScene() {
+		// TODO Auto-generated method stub
+		return this.markerInScene;
+	}
+
+	@Override
+	public void setMarkerInScene(boolean markerInScene) {
+		this.markerInScene = markerInScene;
+	}
 }

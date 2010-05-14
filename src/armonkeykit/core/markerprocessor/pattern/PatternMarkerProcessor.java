@@ -69,6 +69,7 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 	private CaptureQuad cameraBG;
 	private NyARDetectMarker arDetector;
 	private double defaultConfidenceRating = 0.5;
+	private static final int MAX_NO_DETECTIONS = 5;
 
 	public PatternMarkerProcessor(JmeNyARParam jmeARParameters,
 			CaptureQuad cameraBG) {
@@ -103,41 +104,69 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 		try {
 			foundMarkers = arDetector.detectMarkerLite(raster, 100);
 			if (foundMarkers > 0) {
-
-				for (int i = 0; i < foundMarkers; i++) {
-					for (PatternMarker m : markerList) {
-						if (m.getCodeArrayPosition() == arDetector
-								.getARCodeIndex(i)) {
-							// TODO: maybe allow markers to specify their own confidence rating?
-
-							if (arDetector.getConfidence(i) > defaultConfidenceRating) {
-								NyARTransMatResult src = new NyARTransMatResult();
-								arDetector.getTransmationMatrix(i, src);
-								for (IEventListener l : listeners) {
-
-									l.markerChanged(new MarkerChangedEvent(m, src));
-								}
-							} else {
-								for (IEventListener l : listeners) {
-									// TODO: consider making event for this
-									l.markerRemoved(m);
-								}
-							}
-						}
+				NyARTransMatResult src = new NyARTransMatResult();
+				for (int id = 0; id < markerList.size(); id++){
+									PatternMarker m = markerList.get(id);
+									int[] detectionInformation = findBestFitForMarker(foundMarkers, id);
+									int bestDetectedFit = detectionInformation[0]; 
+									double confidence = ((double)detectionInformation[1])/1000;
+									if (bestDetectedFit == -1){
+											m.incrementLossCounter();
+									}else{
+										if (confidence >= defaultConfidenceRating){
+											
+											if (m.getLossCounterValue() > MAX_NO_DETECTIONS) {
+												m.setMarkerInScene(true);
+												for (IEventListener l : listeners){
+													l.markerAdded(m);
+												}
+											}
+											m.resetLossCounter();
+											arDetector.getTransmationMatrix(bestDetectedFit, src);
+											for(IEventListener l : listeners){
+												l.markerChanged(new MarkerChangedEvent(m,src));
+											}
+										}
+									}
+									if (m.getLossCounterValue() > MAX_NO_DETECTIONS){
+										if (m.getMarkerInScene()){
+											m.setMarkerInScene(false);
+										
+											for (IEventListener l : listeners){
+												l.markerRemoved(m);
+											}
+											
+										}
+									}
 					}
-				}
-			} else {
-				for (PatternMarker m : markerList) {
-					for (IEventListener l : listeners) {
-						l.markerRemoved(m);
-					}
-				}
+				
 			}
 		} catch (NyARException e) {
 			e.printStackTrace();
 		}
 	}
 
+	private int[] findBestFitForMarker(int numberOfMarkers, int id){
+		
+		int bestFit = -1;
+		double bestConf = -1;
+		
+		for (int i =0; i<numberOfMarkers; i++){
+			int codeForMarker = arDetector.getARCodeIndex(i);
+			double conf = arDetector.getConfidence(i);
+			
+			if ((codeForMarker == id) && (conf > bestConf)){
+				bestFit = i;
+				bestConf = conf;
+				
+			}
+		}
+		
+		int[] detectorInformation = {bestFit, (int)(bestConf * 1000)};
+		return detectorInformation;
+		
+	}
+	
 	/**
 	 * Creates a PatternMarker object, using given specifications from the
 	 * application.
@@ -161,14 +190,13 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 			code = new NyARCode(segments, segments);
 			code.loadARPattFromFile(path);
 		} catch (NyARException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (code == null)
+		if (code == null){
 			return null;
-		else
+		}else{
 			return new PatternMarker(uid, code, markerWidth);
-
+		}
 	}
 
 	/**
@@ -241,11 +269,18 @@ public class PatternMarkerProcessor implements IMarkerProcessor {
 			markerWidths[i] = markerList.get(i).getWidth();
 		}
 
+		//remove everything from the scene to begin with, hides all content
+		for (PatternMarker m : markerList){
+			for (IEventListener l : listeners){
+				l.markerRemoved(m);
+			}
+		}
 
 		try {
 			arDetector = new NyARDetectMarker(jmeARParameters, codes,
 					markerWidths, codes.length, cameraBG
 					.getRaster().getBufferType());
+			
 		} catch (NyARException e) {
 			e.printStackTrace();
 			System.out.println(e.getMessage());

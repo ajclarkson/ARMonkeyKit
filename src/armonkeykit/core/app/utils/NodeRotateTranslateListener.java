@@ -37,6 +37,7 @@ import java.util.Map;
 import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 
 import com.jme.math.Matrix3f;
+import com.jme.math.Matrix4f;
 import com.jme.scene.Node;
 
 import armonkeykit.core.events.IEventListener;
@@ -54,9 +55,17 @@ import armonkeykit.core.markers.Marker;
 public class NodeRotateTranslateListener implements IEventListener {
 
 	Map<String, Node> markerToNode = new HashMap<String, Node>();
-
+	boolean matrixSmoothing = false;
+	
 	public NodeRotateTranslateListener() {
+		
 	}
+	
+	public NodeRotateTranslateListener(boolean matrixSmoothing){
+		this.matrixSmoothing = matrixSmoothing;
+	}
+	
+	
 
 	
 	public void associate(Marker m, Node n) {
@@ -70,20 +79,48 @@ public class NodeRotateTranslateListener implements IEventListener {
 	public void markerChanged(MarkerChangedEvent event) {
 		Node model = getNodeForMarker(event.getMarker());
 		if(model == null) return;
+		
 		NyARTransMatResult transMatResult = event.getTransMatResult();
-		model.setLocalRotation(new Matrix3f((float) -transMatResult.m00,
+		
+		
+		if (matrixSmoothing){
+			MatrixSmoother matSmooth = event.getMarker().getMatrixSmoother();
+			
+			matSmooth.add(transMatResult);
+			Matrix4f averageMatrix = matSmooth.getAverageMatrix();
+			
+			model.setLocalRotation(new Matrix3f((float) averageMatrix.m00, (float) averageMatrix.m01,(float) averageMatrix.m02,
+					(float) averageMatrix.m10, (float) averageMatrix.m11, (float) averageMatrix.m12, (float) averageMatrix.m20,
+					(float) averageMatrix.m21, (float) averageMatrix.m22));
+			//TODO sort out the translation problem here using average matrix
+			
+			model.setLocalTranslation((float) averageMatrix.m03/10, (float) averageMatrix.m13/10, (float) averageMatrix.m23/10);
+			
+			System.out.println("TRANS: [" + -transMatResult.m03 + ", " + -transMatResult.m13 + ", " + -transMatResult.m23 + "], AVG: [" +
+						averageMatrix.get(0,3)/10 + ", " + averageMatrix.get(1,3)/10 + ", " + averageMatrix.get(2,3)/10 + "]");
+		}else{
+		
+			model.setLocalRotation(new Matrix3f((float) -transMatResult.m00,
 				(float) -transMatResult.m01, (float) transMatResult.m02,
 				(float) -transMatResult.m10, (float) -transMatResult.m11,
 				(float) transMatResult.m12, (float) -transMatResult.m20,
 				(float) -transMatResult.m21, (float) transMatResult.m22));
-		model.setLocalTranslation((float) -transMatResult.m03,
+		
+			model.setLocalTranslation((float) -transMatResult.m03,
 				(float) -transMatResult.m13, (float) -transMatResult.m23);
-		model.setLocalScale(1.0f);
+		
+		}
 	}
 
 	public void markerRemoved(Marker m) {
 		Node n = getNodeForMarker(m);
 		if(n != null) n.setLocalTranslation(0f, 0f, -100000);
+	}
+
+
+	@Override
+	public void markerAdded(Marker m) {
+		
 	}
 
 }

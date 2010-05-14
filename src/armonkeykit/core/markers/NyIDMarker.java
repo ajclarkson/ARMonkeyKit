@@ -31,6 +31,7 @@
  ******************************************************************************/
 package armonkeykit.core.markers;
 
+import armonkeykit.core.app.utils.MatrixSmoother;
 import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 
 
@@ -38,6 +39,7 @@ public class NyIDMarker implements Marker {
 
 	private String uid;
 	private NyARTransMatResult transMatResult;
+	private int lossCounter;
 
 	public NyIDMarker(int id) {
 		this.uid = "" + id;
@@ -54,5 +56,42 @@ public class NyIDMarker implements Marker {
 	public NyARTransMatResult getTransMatResult() {
 		
 		return transMatResult;
+	}
+
+	@Override
+	public MatrixSmoother getMatrixSmoother() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getLossCounterValue() {
+		return lossCounter;
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void incrementLossCounter() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resetLossCounter() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getMarkerInScene() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setMarkerInScene(boolean markerInScene) {
+		// TODO Auto-generated method stub
+		
 	}
 }

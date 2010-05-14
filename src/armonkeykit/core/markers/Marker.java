@@ -31,6 +31,7 @@
  ******************************************************************************/
 package armonkeykit.core.markers;
 
+import armonkeykit.core.app.utils.MatrixSmoother;
 import jp.nyatla.nyartoolkit.core.transmat.NyARTransMatResult;
 
 /**
@@ -49,6 +50,12 @@ public interface Marker {
 	
 	public void setTransMatResult(NyARTransMatResult transMatResult);
 	public NyARTransMatResult getTransMatResult();
+	public MatrixSmoother getMatrixSmoother();
+	public void resetLossCounter();
+	public void incrementLossCounter();
+	public int getLossCounterValue();
+	public void setMarkerInScene(boolean markerInScene);
+	public boolean getMarkerInScene();
 	/**
 	 * Used to obtain the Node which is attached the marker. This node contains models which are
 	 * attached to the marker and therefore need to be translated with it.

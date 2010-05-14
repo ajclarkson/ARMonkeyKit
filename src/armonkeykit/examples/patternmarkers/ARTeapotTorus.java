@@ -61,7 +61,7 @@ public class ARTeapotTorus extends ARMonkeyKitApp {
 
 	public ARTeapotTorus() {
 		super();
-		showCamera = false; // enable or disable camera feed
+		showCamera = true; // enable or disable camera feed
 	    showSceneViewer = true; // enable or disable SceneMonitor
 	}
 
@@ -75,7 +75,7 @@ public class ARTeapotTorus extends ARMonkeyKitApp {
 	@Override
 	protected void simpleInitARSystem() {
 		markerProcessor = initPatternProcessor();
-		rtl = new NodeRotateTranslateListener();
+		rtl = new NodeRotateTranslateListener(true);
 		markerProcessor.registerEventListener(rtl);
 	}
 
@@ -84,14 +84,15 @@ public class ARTeapotTorus extends ARMonkeyKitApp {
 		/**
 		 * This creates the marker objects and registers them to the system
 		 */
+
 		PatternMarker kanji = markerProcessor.createMarkerObject("kanji", 16,
 				"ardata/patt.kanji", 80);
 		markerProcessor.registerMarker(kanji);
-
+		
 		PatternMarker hiro = markerProcessor.createMarkerObject("hiro", 16,
-				"ardata/patt.hiro", 80);
+				"ardata/patterns/patt.hiro", 80);
 		markerProcessor.registerMarker(hiro);
-
+		
 		/**
 		 * Create some content to attach to the markers
 		 * 
@@ -145,7 +146,6 @@ public class ARTeapotTorus extends ARMonkeyKitApp {
 
 	@Override
 	protected void configOptions() {
-		// TODO Auto-generated method stub
 		
 	}
 
