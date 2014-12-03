@@ -1,8 +1,6 @@
 #ARMonkeyKit
 
-## Deprecated
-
-This repository was moved to Github from an old [Google Code repository](http://code.google.com/p/armonkeykit). It uses the now superceded jMonkeyEngine2. Any future development revival will be conducted on this repository and **not** Google Code.
+This repository was moved to Github from an old [Google Code repository](http://code.google.com/p/armonkeykit). It uses the now superceded jMonkeyEngine2. Any future development will be conducted on this repository and **not** Google Code.
 
 ## What Is ARMonkeyKit?
 
